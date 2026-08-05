@@ -1,0 +1,9 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #0B1220; }
+.page-frame {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+}
+#frame-home { height: 100vh; }

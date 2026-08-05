@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risk Scoring</title>
+<link rel="stylesheet" href="../css/page5_risk.css">
+</head>
+<body>
+
+<div class="page">
+
+  <div class="header-row">
+    <div>
+      <h1 class="header-title">Risk Scoring</h1>
+      <div class="header-sub">Employees disrupting operational continuity,<br>Bradford Factor</div>
+    </div>
+        <nav class="pill-nav">
+      <button  data-page="home">Home</button>
+      <button  data-page="summary">Summary</button>
+      <button  data-page="trend">Time Trend</button>
+      <button  data-page="root">Root Cause</button>
+      <button class="is-active" data-page="risk">Risk</button>
+      <button  data-page="recommendations">Recommendations</button>
+    </nav>
+    <div></div>
+  </div>
+
+  <div class="tier-row" id="tierRow"></div>
+
+  <div class="table-card">
+    <p class="table-title">Employee risk table — Bradford Factor</p>
+    <div class="table-scroll">
+      <table class="risk-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Age</th><th>Absences</th><th>Total Hours</th>
+            <th>Bradford</th><th>Disciplinary</th><th>Segment</th>
+          </tr>
+        </thead>
+        <tbody id="riskTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="emp-tooltip" id="empTooltip"></div>
+
+
+
+
+<script src="../data/data.js"></script>
+<script src="../js/page5_risk.js"></script>
+</body>
+</html>

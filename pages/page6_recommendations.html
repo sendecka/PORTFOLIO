@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recommendations &amp; Action</title>
+<link rel="stylesheet" href="../css/page6_recommendations.css">
+</head>
+<body>
+
+<div class="page">
+
+  <div class="header-row">
+    <div>
+      <h1 class="header-title">Recommendations &amp; Action</h1>
+      <div class="header-sub">Actions to reduce absenteeism</div>
+    </div>
+        <nav class="pill-nav">
+      <button  data-page="home">Home</button>
+      <button  data-page="summary">Summary</button>
+      <button  data-page="trend">Time Trend</button>
+      <button  data-page="root">Root Cause</button>
+      <button  data-page="risk">Risk</button>
+      <button class="is-active" data-page="recommendations">Recommendations</button>
+    </nav>
+    <div></div>
+  </div>
+
+  <div class="alert-banner" id="alertBanner"></div>
+
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="rec-grid">
+    <div class="rec-card">
+      <div class="rec-tags"><span class="tag tag-critical">Critical</span><span class="tag tag-gray">Diseases</span></div>
+      <p class="rec-title">Referral to occupational medicine</p>
+      <p class="rec-desc" id="rec1desc"></p>
+    </div>
+    <div class="rec-card">
+      <div class="rec-tags"><span class="tag tag-critical">Critical</span><span class="tag tag-gray">Personal / Family</span></div>
+      <p class="rec-title">HR conversation + flexible hours</p>
+      <p class="rec-desc">Dental and medical consultation absences (717h combined) signal preventable absences. Introduce flexible start/end times so employees can attend appointments without taking full-day leave.</p>
+    </div>
+    <div class="rec-card">
+      <div class="rec-tags"><span class="tag tag-observation">Observation</span><span class="tag tag-gray">Rising Bradford</span></div>
+      <p class="rec-title">Preventive manager 1:1</p>
+      <p class="rec-desc">Employees crossing into Urgent segment (Bradford 400+) should trigger an automated flag to their manager for a brief check-in conversation before escalating to formal process.</p>
+    </div>
+    <div class="rec-card">
+      <div class="rec-tags"><span class="tag tag-blue">All departments</span><span class="tag tag-gray">Mon/Fri pattern</span></div>
+      <p class="rec-title">Work culture audit</p>
+      <p class="rec-desc" id="rec4desc"></p>
+    </div>
+    <div class="rec-card">
+      <div class="rec-tags"><span class="tag tag-green">Preventive</span><span class="tag tag-gray">0-5 years tenure</span></div>
+      <p class="rec-title">Onboarding process review</p>
+      <p class="rec-desc">Early-tenure absence spikes (338h in 0-5 year group) suggest onboarding gaps. Introduce a 90-day structured buddy program and regular check-ins to improve retention and engagement.</p>
+    </div>
+    <div class="rec-card">
+      <div class="rec-tags"><span class="tag tag-green">Preventive</span><span class="tag tag-gray">Distance 30km+</span></div>
+      <p class="rec-title">Hybrid eligibility expansion</p>
+      <p class="rec-desc">Strong positive correlation between commute distance and absence hours. Evaluate hybrid eligibility for employees living 30km+ from office — estimated impact on 11 high-distance employees.</p>
+    </div>
+  </div>
+
+  <div class="monitor-card">
+    <p class="monitor-title">KPIs to monitor going forward</p>
+    <div class="monitor-grid">
+      <div>
+        <p class="monitor-metric" style="color:#C0392B;">Bradford Factor</p>
+        <p class="monitor-desc" id="kpiMonitor1"></p>
+      </div>
+      <div>
+        <p class="monitor-metric" style="color:var(--navy);">Absence Rate</p>
+        <p class="monitor-desc" id="kpiMonitor2"></p>
+      </div>
+      <div>
+        <p class="monitor-metric" style="color:#4F8A1F;">Est. Annual Cost</p>
+        <p class="monitor-desc" id="kpiMonitor3"></p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<script src="../data/data.js"></script>
+<script src="../js/page6_recommendations.js"></script>
+</body>
+</html>

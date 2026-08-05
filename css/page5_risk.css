@@ -1,0 +1,113 @@
+:root {
+    --navy: #1B3B6F;
+    --bg: #F3F4F6;
+    --card: #FFFFFF;
+    --border: #EAEBEF;
+    --text-1: #1B1F27;
+    --text-2: #6B7280;
+    --text-3: #9AA1AC;
+    --font: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+
+    --c-critical: #E24B4A;
+    --c-urgent:   #C4791B;
+    --c-formal:   #B99400;
+    --c-monitor:  #1F6FD6;
+    --c-normal:   #4F8A1F;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); font-family: var(--font); color: var(--text-1); }
+  .page { max-width: 1380px; margin: 0 auto; padding: 22px 32px 50px; }
+
+  /* ---------- HEADER ---------- */
+  .header-row {
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    gap: 16px; margin-bottom: 22px;
+  }
+  .header-title { font-size: 26px; font-weight: 700; margin: 0; }
+  .header-sub { font-size: 13px; color: var(--text-2); margin-top: 4px; line-height: 1.4; }
+  .pill-nav {
+    grid-column: 2; display: inline-flex; align-items: center; gap: 4px;
+    background: #fff; border: 1px solid var(--border); border-radius: 100px;
+    padding: 6px; box-shadow: 0 1px 2px rgba(16,24,40,.04);
+  }
+  .pill-nav button {
+    font-family: inherit; font-size: 13px; font-weight: 500; color: var(--text-2);
+    background: transparent; border: none; padding: 8px 16px; border-radius: 100px;
+    cursor: pointer; white-space: nowrap;
+  }
+  .pill-nav button.is-active { background: #E8EEF9; color: var(--navy); font-weight: 600; }
+  .pill-nav button.is-disabled { color: var(--text-3); cursor: default; }
+  .pill-nav button.is-disabled:hover { background: transparent; }
+
+  /* ---------- TIER KPI CARDS (obrotowe) ---------- */
+  .tier-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; margin-bottom: 20px; }
+  .flip-card { width: 100%; height: 110px; perspective: 1000px; }
+  .flip-inner {
+    position: relative; width: 100%; height: 100%;
+    transition: transform .6s; transform-style: preserve-3d;
+  }
+  .flip-card:hover .flip-inner { transform: rotateY(180deg); }
+  .flip-front, .flip-back {
+    position: absolute; width: 100%; height: 100%;
+    backface-visibility: hidden;
+    border-radius: 20px; padding: 16px; box-sizing: border-box;
+    background: #fff; box-shadow: 0 10px 10px rgba(0,0,0,.06);
+  }
+  .flip-back { transform: rotateY(180deg); }
+  .kpi-title { font-size: 11px; font-weight: 500; color: #aaa; letter-spacing: .05em; text-transform: uppercase; margin: 0 0 6px; }
+  .kpi-value { font-size: 26px; font-weight: 500; letter-spacing: -0.5px; margin: 0; line-height: 1; }
+  .kpi-sub { font-size: 12px; margin-top: 6px; }
+
+  /* ---------- TABLE CARD ---------- */
+  .table-card {
+    background: var(--card); border-radius: 16px; padding: 18px 0 4px;
+    box-shadow: 0 1px 3px rgba(16,24,40,.06), 0 1px 2px rgba(16,24,40,.04);
+  }
+  .table-title {
+    font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--text-3); margin: 0 0 12px; padding: 0 22px;
+  }
+  .table-scroll { max-height: 480px; overflow-y: auto; padding: 0 22px; }
+  table.risk-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .risk-table thead th {
+    position: sticky; top: 0; background: #fff; z-index: 1;
+    text-align: left; font-size: 10.5px; font-weight: 600; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--text-3); padding: 8px 10px; border-bottom: 1px solid var(--border);
+  }
+  .risk-table td { padding: 10px 10px; border-bottom: 1px solid #F2F3F5; color: var(--text-1); }
+  .risk-table td.emp-id { font-weight: 700; }
+  .risk-table td.num { font-variant-numeric: tabular-nums; }
+  .segment-pill {
+    display: inline-block; padding: 3px 10px; border-radius: 100px;
+    font-size: 11px; font-weight: 600;
+  }
+  .risk-table tbody tr { cursor: default; transition: background .1s ease; }
+  .risk-table tbody tr:hover { background: #F5F7FA; }
+
+  /* ---------- tooltip z danymi personalnymi ---------- */
+  .emp-tooltip {
+    position: fixed;
+    z-index: 1000;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 12px 28px rgba(16,24,40,.16), 0 2px 6px rgba(16,24,40,.08);
+    padding: 12px 14px;
+    min-width: 240px;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity .12s ease, transform .12s ease;
+    pointer-events: none;
+  }
+  .emp-tooltip.is-visible { opacity: 1; transform: translateY(0); }
+  .emp-tooltip-name { font-size: 13.5px; font-weight: 700; color: var(--navy); margin: 0 0 8px; }
+  .emp-tooltip table { width: 100%; border-collapse: collapse; }
+  .emp-tooltip td { font-size: 11.5px; padding: 3px 0; }
+  .emp-tooltip td.et-label { color: var(--text-3); width: 96px; }
+  .emp-tooltip td.et-val { color: var(--text-1); font-weight: 600; text-align: right; }
+
+  @media (max-width: 1100px) { .tier-row { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 980px) {
+    .header-row { grid-template-columns: 1fr; text-align: center; }
+    .pill-nav { justify-self: center; flex-wrap: wrap; }
+    .tier-row { grid-template-columns: repeat(2, 1fr); }
+  }

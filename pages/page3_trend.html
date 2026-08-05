@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time Trend Analysis</title>
+<link rel="stylesheet" href="../css/page3_trend.css">
+</head>
+<body>
+
+<div class="page">
+
+  <div class="header-row">
+    <div>
+      <h1 class="header-title">Time Trend Analysis</h1>
+      <div class="header-sub">Seasonality and day-of-week patterns</div>
+    </div>
+        <nav class="pill-nav">
+      <button  data-page="home">Home</button>
+      <button  data-page="summary">Summary</button>
+      <button class="is-active" data-page="trend">Time Trend</button>
+      <button  data-page="root">Root Cause</button>
+      <button  data-page="risk">Risk</button>
+      <button  data-page="recommendations">Recommendations</button>
+    </nav>
+    <div></div>
+  </div>
+
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="card">
+    <div class="card-title-row">
+      <p class="card-title">Absence heatmap — month × day</p>
+      <span class="filter-badge" id="filterBadge" style="display:none;">
+        <span class="fb-label"></span>
+        <button class="fb-clear" id="fbClear" aria-label="Wyczysc filtr">&times;</button>
+      </span>
+    </div>
+    <div id="heatmapWrap"></div>
+  </div>
+
+  <div class="split-grid">
+    <div class="card">
+      <p class="card-title">Seasonality — absence by season</p>
+      <div class="card-sub" id="seasonSub"></div>
+      <div class="season-bars" id="seasonBars"></div>
+    </div>
+
+    <div class="card">
+      <p class="card-title" id="dowTitle">Day-of-week pattern (total hours)</p>
+      <div id="dowList" style="margin-top:14px;"></div>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<script src="../data/data.js"></script>
+<script src="../js/page3_trend.js"></script>
+</body>
+</html>
