@@ -23,7 +23,12 @@
       <button  data-page="risk">Risk</button>
       <button  data-page="recommendations">Recommendations</button>
     </nav>
-    <div></div>
+    <div style="justify-self: end;">
+      <span class="filter-badge" id="filterBadge" style="display:none;">
+        <span class="fb-label"></span>
+        <button class="fb-clear" id="fbClear" aria-label="Wyczysc filtr">&times;</button>
+      </span>
+    </div>
   </div>
 
   <div class="kpi-row" id="kpiRow"></div>
@@ -31,10 +36,6 @@
   <div class="card">
     <div class="card-title-row">
       <p class="card-title">Absence heatmap — month × day</p>
-      <span class="filter-badge" id="filterBadge" style="display:none;">
-        <span class="fb-label"></span>
-        <button class="fb-clear" id="fbClear" aria-label="Wyczysc filtr">&times;</button>
-      </span>
     </div>
     <div id="heatmapWrap"></div>
   </div>

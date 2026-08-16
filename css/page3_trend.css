@@ -137,8 +137,8 @@
   .season-bars {
     display: flex;
     align-items: flex-end;
-    gap: 18px;
-    height: 210px;
+    gap: 14px;
+    height: 150px;
     padding: 4px 6px 0;
   }
   .season-bar-col {
@@ -168,15 +168,15 @@
 
   /* ---------- DAY OF WEEK LIST ---------- */
   .dow-row {
-    display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
-    cursor: pointer; border-radius: 8px; padding: 3px 4px; margin-left: -4px;
+    display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
+    cursor: pointer; border-radius: 8px; padding: 2px 4px; margin-left: -4px;
     transition: background .15s ease, opacity .3s ease;
   }
   .dow-row:hover { background: #F5F6F8; }
   .dow-row.dimmed { opacity: .35; }
   .dow-row:last-child { margin-bottom: 0; }
   .dow-label { width: 38px; font-size: 12.5px; font-weight: 600; color: var(--text-1); flex-shrink: 0; }
-  .dow-track { flex: 1; height: 20px; background: #F0F1F4; border-radius: 5px; overflow: hidden; position: relative; }
+  .dow-track { flex: 1; height: 16px; background: #F0F1F4; border-radius: 5px; overflow: hidden; position: relative; }
   .dow-track.highlight { background: var(--accent-red-light); }
   .dow-fill { height: 100%; border-radius: 5px; background: var(--navy); width: 0; transition: width .8s cubic-bezier(.2,.8,.2,1); }
   .dow-fill.highlight { background: var(--accent-red); }

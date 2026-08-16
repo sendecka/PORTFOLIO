@@ -36,11 +36,11 @@ const TIERS = [
   { key: "Normal",   min: -Infinity, max: 99,  color: "#639922", labelColor: "#27500A", range: "<100" },
 ];
 
-/* ---------- stan filtra (wybrany miesiac z wykresu) ---------- */
-let activeMonth = null; // null = caly rok, 1-12 = wybrany miesiac
+/* ---------- stan filtra: null | {type:'month', value:1-12} ---------- */
+let activeFilter = null;
 
-function computeStats(filterMonth) {
-  const filtered = filterMonth ? DATA.filter(r => r["Month of absence"] === filterMonth) : DATA;
+function computeStats(filter) {
+  const filtered = filter ? DATA.filter(r => r["Month of absence"] === filter.value) : DATA;
 
   const totalHours = sum(filtered, "Absenteeism time in hours");
   const totalPct = round((totalHours - TOTAL_ABSENCE_PY) / TOTAL_ABSENCE_PY * 100, 0);
@@ -80,7 +80,7 @@ function computeStats(filterMonth) {
 
   const reasonTotals = new Map();
   filtered.forEach(r => reasonTotals.set(r.ReasonLabel, (reasonTotals.get(r.ReasonLabel)||0) + r["Absenteeism time in hours"]));
-  const topReasons = [...reasonTotals.entries()].sort((a,b)=>b[1]-a[1]).slice(0,9);
+  const topReasons = [...reasonTotals.entries()].sort((a,b)=>b[1]-a[1]).slice(0,6);
   const maxReason = topReasons.length ? topReasons[0][1] : 1;
 
   return { totalHours, totalPct, avgHours, top4, maxTop, tierStats, criticalStat, totalEmp, cost, topReasons, maxReason };
@@ -110,15 +110,15 @@ function animateCount(el, endValue, opts = {}) {
 
 let prevStats = null; // do animacji "od" poprzedniej wartosci przy zmianie filtra
 
-function renderAll(filterMonth, opts = {}) {
+function renderAll(filter, opts = {}) {
   const isInitial = opts.initial === true;
-  const s = computeStats(filterMonth);
-  const periodLabel = filterMonth ? MONTH_FULL[filterMonth] : null;
+  const s = computeStats(filter);
+  const periodLabel = !filter ? null : filter.type === 'month' ? MONTH_FULL[filter.value] : filter.value;
 
-  /* --- filter badge w naglowku karty wykresu --- */
+  /* --- filter badge w header-row (gorna czesc strony) --- */
   const badge = document.getElementById("filterBadge");
   if (badge) {
-    if (filterMonth) {
+    if (filter) {
       badge.style.display = "inline-flex";
       badge.querySelector(".fb-label").textContent = periodLabel;
     } else {
@@ -126,23 +126,23 @@ function renderAll(filterMonth, opts = {}) {
     }
   }
 
-  /* --- KPI 1 subtitle: rok do roku tylko dla calego roku, inaczej % udzialu w roku --- */
-  const kpi1Sub = filterMonth
+  /* --- KPI 1 subtitle: rok do roku tylko bez filtra, inaczej % udzialu w roku --- */
+  const kpi1Sub = filter
     ? `${round(s.totalHours/totalHoursYear*100,1)}% udzialu w roku`
     : `&#9650; +${s.totalPct}% vs last year`;
-  const kpi1SubColor = filterMonth ? "" : "";
+  const kpi1SubColor = filter ? "" : "";
 
   document.getElementById("kpiRow").innerHTML = `
     <div class="flip-card">
       <div class="flip-inner">
         <div class="flip-front">
-          <p class="kpi-title">Total absence hours${filterMonth ? " &middot; " + periodLabel : ""}</p>
+          <p class="kpi-title">Total absence hours${filter ? " &middot; " + periodLabel : ""}</p>
           <div class="kpi-value" id="kpiVal1">0</div>
           <div class="kpi-sub">${kpi1Sub}</div>
         </div>
         <div class="flip-back">
-          <p class="kpi-title">${filterMonth ? "Cala rok" : "Previous year"}</p>
-          <div class="kpi-value">${fmtSpace(filterMonth ? totalHoursYear : TOTAL_ABSENCE_PY)}</div>
+          <p class="kpi-title">Previous year</p>
+          <div class="kpi-value">${fmtSpace(TOTAL_ABSENCE_PY)}</div>
           <div class="kpi-sub good"></div>
         </div>
       </div>
@@ -190,7 +190,7 @@ function renderAll(filterMonth, opts = {}) {
     <div class="flip-card orange">
       <div class="flip-inner">
         <div class="flip-front">
-          <p class="kpi-title">${filterMonth ? "Est. cost &middot; " + periodLabel : "Est. annual cost"}</p>
+          <p class="kpi-title">${filter ? "Est. cost &middot; " + periodLabel : "Est. annual cost"}</p>
           <div class="kpi-value" id="kpiVal4">$0k</div>
         </div>
         <div class="flip-back">
@@ -218,7 +218,7 @@ function renderAll(filterMonth, opts = {}) {
     document.querySelectorAll(".rank-bar-fill, .tier-bar").forEach(el => { el.style.width = el.dataset.w + "%"; });
   });
 
-  /* --- lista powodow --- */
+  /* --- lista powodow (statyczna, bez interakcji) --- */
   const listEl = document.getElementById("reasonList");
   listEl.innerHTML = s.topReasons.map(([label, hours]) => `
     <div class="reason-item">
@@ -249,7 +249,7 @@ const peakLabelPlugin = {
   id: 'peakLabels',
   afterDatasetsDraw(chart) {
     const meta = chart.getDatasetMeta(0);
-    const data = monthTotals;
+    const data = chart.data.datasets[0].data; // zywe dane (reaguja na filtr powodu)
     const ctx = chart.ctx;
     ctx.save();
     ctx.font = '600 12px Segoe UI';
@@ -266,8 +266,8 @@ const peakLabelPlugin = {
     ctx.restore();
 
     // podswietlenie wybranego miesiaca
-    if (activeMonth) {
-      const pt = meta.data[activeMonth - 1];
+    if (activeFilter && activeFilter.type === 'month') {
+      const pt = meta.data[activeFilter.value - 1];
       if (pt) {
         ctx.save();
         ctx.beginPath();
@@ -335,9 +335,10 @@ chartInstance = new Chart(document.getElementById("mainChart"), {
       if (!pts.length) return;
       const idx = pts[0].index;
       const clickedMonth = idx + 1;
-      activeMonth = (activeMonth === clickedMonth) ? null : clickedMonth;
+      const isSame = activeFilter && activeFilter.type === 'month' && activeFilter.value === clickedMonth;
+      activeFilter = isSame ? null : { type: 'month', value: clickedMonth };
       chart.draw();
-      renderAll(activeMonth);
+      renderAll(activeFilter);
     },
     plugins: {
       legend: { display: false },
@@ -364,7 +365,7 @@ chartInstance = new Chart(document.getElementById("mainChart"), {
 renderAll(null, { initial: true });
 
 document.getElementById("fbClear").addEventListener("click", () => {
-  activeMonth = null;
+  activeFilter = null;
   if (chartInstance) chartInstance.draw();
   renderAll(null);
 });
