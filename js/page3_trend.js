@@ -185,7 +185,7 @@ const seasonTotalsFull = (() => {
   DATA.filter(r => r.SeasonLbl).forEach(r => m.set(r.SeasonLbl, (m.get(r.SeasonLbl)||0) + r["Absenteeism time in hours"]));
   return [...m.entries()].sort((a,b)=>b[1]-a[1]);
 })();
-const BAR_MAX_PX = 90;
+const BAR_MAX_PX = 92;
 
 function renderSeasonBars(filter) {
   document.getElementById("seasonSub").textContent = `Total ${fmtSpace(totalHours)}h across 4 seasons`;

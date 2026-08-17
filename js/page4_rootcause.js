@@ -84,9 +84,9 @@ function renderReasons(filter) {
 }
 
 /* ============ wykresy slupkowe: wiek <-> staz pracy, wzajemnie filtrujace ============ */
-function renderVBars(containerId, groups, pickedValue, filterType) {
+function renderVBars(containerId, groups, pickedValue, filterType, chHeight) {
   const maxH = Math.max(...groups.map(g => g.hours), 1);
-  const CH = 120;
+  const CH = chHeight || 100;
   document.getElementById(containerId).innerHTML = groups.map((g,i) => {
     const barPx = round(g.hours/maxH*CH);
     const pct = totalHours > 0 ? (g.hours/totalHours*100).toFixed(1) : "0.0";
@@ -124,7 +124,7 @@ function renderAgeBars(filter) {
 function renderSvcBars(filter) {
   const scopeData = (filter && filter.type === 'age') ? getFilteredData(filter) : DATA;
   const groups = SVC_LABELS.map(label => ({ label, hours: sum(scopeData.filter(r => svcBin(r["Service time"]) === label), H) })).sort((a,b) => b.hours - a.hours);
-  renderVBars("svcBars", groups, (filter && filter.type === 'service') ? filter.value : null, 'service');
+  renderVBars("svcBars", groups, (filter && filter.type === 'service') ? filter.value : null, 'service', 128);
 }
 
 /* ============ KPI mini cards, przeliczane w obrebie filtra ============ */
@@ -224,6 +224,33 @@ function renderEverything() {
 
   requestAnimationFrame(() => {
     document.querySelectorAll(".hrow-bar").forEach(el => { el.style.width = el.dataset.w + "%"; });
+  });
+
+  alignColumnBottoms();
+}
+
+/* ============ wyrownanie dolnych krawedzi lewej i prawej kolumny co do piksela ============ */
+function alignColumnBottoms() {
+  const cols = document.querySelectorAll(".root-grid > .col");
+  if (cols.length < 2) return;
+  const [leftCol, rightCol] = cols;
+
+  const leftSpacer = leftCol.querySelector(".col-align-spacer");
+  const rightSpacer = rightCol.querySelector(".col-align-spacer");
+  if (leftSpacer) leftSpacer.remove();
+  if (rightSpacer) rightSpacer.remove();
+
+  requestAnimationFrame(() => {
+    const leftH = leftCol.getBoundingClientRect().height;
+    const rightH = rightCol.getBoundingClientRect().height;
+    const diff = Math.round(leftH - rightH);
+    if (diff === 0) return;
+
+    const shorter = diff > 0 ? rightCol : leftCol;
+    const spacer = document.createElement("div");
+    spacer.className = "col-align-spacer";
+    spacer.style.height = Math.abs(diff) + "px";
+    shorter.lastElementChild.appendChild(spacer);
   });
 }
 

@@ -81,6 +81,34 @@
   .monitor-metric { font-size: 14px; font-weight: 700; margin: 0 0 6px; }
   .monitor-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.5; margin: 0; }
 
+  /* ---------- animacja ladowania strony ---------- */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .alert-banner,
+  .kpi-row .kpi-card,
+  .rec-grid .rec-card,
+  .monitor-card {
+    opacity: 0;
+    animation: fadeInUp .55s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  .alert-banner { animation-delay: 0s; }
+  .kpi-row .kpi-card:nth-child(1) { animation-delay: .08s; }
+  .kpi-row .kpi-card:nth-child(2) { animation-delay: .16s; }
+  .kpi-row .kpi-card:nth-child(3) { animation-delay: .24s; }
+  .rec-grid .rec-card:nth-child(1) { animation-delay: .30s; }
+  .rec-grid .rec-card:nth-child(2) { animation-delay: .36s; }
+  .rec-grid .rec-card:nth-child(3) { animation-delay: .42s; }
+  .rec-grid .rec-card:nth-child(4) { animation-delay: .48s; }
+  .rec-grid .rec-card:nth-child(5) { animation-delay: .54s; }
+  .rec-grid .rec-card:nth-child(6) { animation-delay: .60s; }
+  .monitor-card { animation-delay: .68s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .alert-banner, .kpi-row .kpi-card, .rec-grid .rec-card, .monitor-card { animation: none; opacity: 1; }
+  }
+
   @media (max-width: 980px) {
     .header-row { grid-template-columns: 1fr; text-align: center; }
     .pill-nav { justify-self: center; flex-wrap: wrap; }

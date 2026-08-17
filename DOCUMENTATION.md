@@ -162,10 +162,22 @@ Strony Summary, Time Trend i Root Cause implementują ten sam wzorzec:
    na nowo z przefiltrowanego podzbioru danych i ponownie renderuje DOM
 4. Wybrany element jest wizualnie wyróżniony, pozostałe przygaszone
    (`opacity: .35`)
-5. Plakietka z nazwą aktywnego filtra + przycisk „×” do czyszczenia
+5. Plakietka z nazwą aktywnego filtra + przycisk „×” do czyszczenia,
+   umieszczona spójnie na wszystkich trzech stronach w prawym rogu
+   `header-row` (obok nawigacji), niezależnie od tego, który wykres/lista
+   ustawiła filtr
+
+### 3.7 Animacja wejścia (fade-in-up)
+
+Wszystkie 6 stron używa tej samej animacji wejścia kart — płynne pojawienie
+się z lekkim przesunięciem od dołu, z narastającym opóźnieniem między
+kolejnymi elementami (`@keyframes fadeInUp`, `.55s cubic-bezier(.2,.8,.2,1)`).
+Każda strona ma własną kolejność opóźnień (`animation-delay`) dopasowaną do
+układu jej kart. Każdy plik CSS zawiera też regułę
+`@media (prefers-reduced-motion: reduce)`, która wyłącza animację dla osób
+z ograniczonym ruchem w ustawieniach systemowych.
 
 ---
-
 
 ## 4. Struktura plików
 
@@ -264,12 +276,23 @@ maksymalnej wartości w całej tabeli.
 
 Siedem kart w układzie dwukolumnowym:
 
+**Lewa kolumna:**
 1. **Top absence reason** — 7 najczęstszych kodów ICD + zbiorcza kategoria „Other"
 2. **Absence by employee age** — 4 przedziały wiekowe
-3. **KPI mini** — liczba pracowników, średni wiek, zakres wieku
-4. **Social habits** / **Education level** — dwie listy obok siebie
-5. **Distance from home** — 4 przedziały odległości
-6. **Total absence by service years** — 5 przedziałów stażu pracy
+3. **Distance from home** — 4 przedziały odległości
+
+**Prawa kolumna:**
+4. **KPI mini** — liczba pracowników, średni wiek, zakres wieku
+5. **Social habits** — osobna karta, 4 grupy (Drinkers/Smokers/Both/Neither)
+6. **Education level** — osobna karta, 3 poziomy wykształcenia
+7. **Total absence by service years** — 5 przedziałów stażu pracy
+
+Kolumny nie są matematycznie równej wysokości (lewa jest nieco dłuższa) —
+świadomy kompromis między układem treści a estetyką; dolne krawędzie obu
+kolumn są jednak wyrównywane dynamicznie w JS (patrz `alignColumnBottoms()`
+w `js/page4_rootcause.js`), które mierzy rzeczywistą wysokość obu kolumn po
+wyrenderowaniu i dokleja niewidoczny odstęp na dole krótszej z nich — dzięki
+temu wygląda spójnie niezależnie od przeglądarki/czcionek.
 
 **Interakcja:** kliknięcie słupka na wykresie wieku **lub** stażu pracy
 wzajemnie filtruje: kliknięty wykres podświetla wybrany słupek, **drugi
