@@ -3,7 +3,7 @@
 Interaktywny raport analizy absencji pracowniczej, odtworzony na podstawie oryginalnego
 raportu Power BI i rozbudowany o dodatkowe analizy, interakcje i wizualizacje. Wszystkie
 liczby na każdej stronie liczone są **dynamicznie w przeglądarce** na podstawie
-rzeczywistych danych źródłowych — żadna wartość nie jest zaszyta na sztywno.
+rzeczywistych danych źródłowych - żadna wartość nie jest zaszyta na sztywno.
 
 ---
 
@@ -22,15 +22,13 @@ rzeczywistych danych źródłowych — żadna wartość nie jest zaszyta na szty
    - [5.6 Recommendations](#56-strona-6--recommendations--action)
 6. [Kluczowe wzory i metodologia](#6-kluczowe-wzory-i-metodologia)
 7. [Założenia i zastrzeżenia](#7-założenia-i-zastrzeżenia)
-8. [Uruchomienie i wdrożenie](#8-uruchomienie-i-wdrożenie)
-9. [Znane ograniczenia](#9-znane-ograniczenia)
+8. [Znane ograniczenia](#9-znane-ograniczenia)
 
 ---
 
 ## 2. Źródło danych
 
-Projekt bazuje na publicznym zbiorze danych **Absenteeism at Work** (UCI Machine
-Learning Repository) — 740 rekordów absencji dla 36 pracowników firmy kurierskiej.
+Projekt bazuje na publicznym zbiorze danych **Absenteeism at Work** - 740 rekordów absencji dla 36 pracowników firmy kurierskiej.
 
 Plik: `data/Absenteeism_at_work.csv`
 
@@ -42,7 +40,7 @@ Kluczowe kolumny wykorzystywane w raporcie:
 | `Reason for absence` | Kod powodu nieobecności (0–28, wg klasyfikacji ICD) |
 | `Month of absence` | Miesiąc (1–12, 0 = brak danych) |
 | `Day of the week` | Dzień tygodnia (2=Pon … 6=Pt) |
-| `Seasons` | Kod sezonu (1–4) — **uwaga: konwencja z Brazylii, patrz sekcja 6.3** |
+| `Seasons` | Kod sezonu (1–4) |
 | `Age` | Wiek pracownika |
 | `Education` | Poziom wykształcenia (1–4) |
 | `Social drinker` / `Social smoker` | Flaga 0/1 |
@@ -50,11 +48,6 @@ Kluczowe kolumny wykorzystywane w raporcie:
 | `Service time` | Staż pracy (lata) |
 | `Disciplinary failure` | Flaga nieobecności dyscyplinarnej (0/1) |
 | `Absenteeism time in hours` | Liczba godzin nieobecności (kluczowa metryka) |
-
-Oryginalny raport Power BI (`ANALYSIS_OF_ABSTINENCE_AT_WORK.pbix`) korzystał z
-połączenia na żywo (live connection) do Power BI Service — sam plik `.pbix` nie
-zawierał danych, tylko definicję wizualizacji. Dane rzeczywiste dostarczono osobno
-jako plik CSV.
 
 ---
 
@@ -390,8 +383,7 @@ reprezentują prawdziwych osób — patrz sekcja 7.
 
 ### 5.6 Strona 6 — Recommendations & Action
 
-Strona narracyjna (tekst analityka), nie sterowana formułami DAX jak
-pozostałe. Zawiera:
+Strona narracyjna (tekst analityka), Zawiera:
 - Baner ostrzegawczy o efekcie poniedziałkowym (liczony dynamicznie)
 - 3 karty KPI (koszt roczny, potencjalne oszczędności 20%, liczba
   pracowników Critical)
@@ -492,56 +484,9 @@ Stawka $42/h jest **założeniem biznesowym**, nieobecnym w danych źródłowych
 | Imię, dział, przełożony (strona Risk) | **W pełni fikcyjne** | Wygenerowane demonstracyjnie, nie reprezentują rzeczywistych osób |
 | Treść kart na stronie Recommendations | **Tekst analityka** | Nie generowana formułą — liczby w opisach są jednak liczone dynamicznie |
 
-**Rekomendacja:** przed udostępnieniem raportu odbiorcom spoza tego
-projektu, jasno oznacz sekcję z danymi personalnymi na stronie Risk jako
-przykładowe/demonstracyjne, aby uniknąć nieporozumień.
-
 ---
 
-## 8. Uruchomienie i wdrożenie
-
-### 8.1 Lokalnie (bez instalacji)
-
-Otwórz `index.html` bezpośrednio w przeglądarce — podwójne kliknięcie lub
-przeciągnięcie pliku do okna przeglądarki. Nie wymaga serwera, Node.js ani
-połączenia z internetem (dane i biblioteka Chart.js są plikami lokalnymi
-wczytywanymi jako zwykłe skrypty, nie przez `fetch()` — patrz sekcja 3.3 —
-dzięki temu działają poprawnie nawet z dysku).
-
-### 8.2 GitHub Pages (darmowy hosting)
-
-Po wgraniu repozytorium na GitHub:
-1. **Settings → Pages**
-2. Source: **Deploy from a branch** → branch **main** → folder **/ (root)**
-3. Po chwili raport dostępny pod `https://TWOJA-NAZWA.github.io/NAZWA-REPO/`
-
-### 8.3 Aktualizacja danych
-
-Aby podmienić dane źródłowe i przeliczyć wszystkie miary na nowo:
-
-```bash
-pip install -r build/requirements.txt   # jednorazowo (pandas)
-```
-
-1. Zamień `data/Absenteeism_at_work.csv` (zachowując te same nazwy kolumn)
-2. Uruchom skrypt budujący miary:
-   ```bash
-   python3 build/compute_measures.py
-   ```
-   Skrypt wczyta CSV, przeliczy wszystkie wskaźniki (sekcja 6) i nadpisze
-   `data/measures.js`.
-3. To wszystko — **wszystkie 6 stron korzysta z tego samego pliku**
-   `data/measures.js`, więc nie trzeba nic podmieniać osobno w każdej stronie
-   ani ręcznie odtwarzać formuł w JS.
-
-Jeśli chcesz zmienić samą **metodologię** (np. progi Bradford Factor, stawkę
-kosztową, biny wiekowe), edytuj odpowiednią stałą/funkcję w
-`build/compute_measures.py` i uruchom go ponownie — to jedyne miejsce, w
-którym te formuły są zdefiniowane.
-
----
-
-## 9. Znane ograniczenia
+## 8. Znane ograniczenia
 
 - **Brak zapisu stanu filtrów** — odświeżenie strony lub przejście między
   zakładkami resetuje aktywne filtry do stanu początkowego (cały rok/brak

@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puls Zespołu — Panel HR: Oceny i Ankiety Pracownicze</title>
+<style>
+  :root{
+    --bg:#E7EEF7;
+    --surface:rgba(255,255,255,0.55);
+    --surface-2:rgba(255,255,255,0.35);
+    --ink:#1E2B3C;
+    --ink-soft:#5A6B7F;
+    --ink-faint:#8CA0B4;
+    --line:rgba(255,255,255,0.55);
+    --line-strong:rgba(31,58,90,0.14);
+    --accent:#5C89C2;
+    --accent-2:#8FC1E3;
+    --accent-soft:rgba(92,137,194,0.14);
+    --good:#2C9C79;
+    --good-soft:#E1F4EC;
+    --warn:#BD8A2E;
+    --warn-soft:#FAF1DE;
+    --bad:#CE6E63;
+    --bad-soft:#FBEAE7;
+    --radius-lg:26px;
+    --radius-md:20px;
+    --radius-sm:13px;
+    --shadow-sm:0 1px 2px rgba(31,58,90,.05), 0 1px 1px rgba(31,58,90,.04);
+    --shadow-md:0 18px 42px rgba(31,58,90,.12);
+    --glass-blur:blur(22px) saturate(160%);
+    --font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+    --font-mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Consolas,monospace;
+    --dur:.6s;
+    --ease:cubic-bezier(.22,.8,.24,1);
+  }
+  @media (prefers-reduced-motion: reduce){
+    :root{ --dur:0.001s; }
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-ui);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.45;
+    position:relative;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0; z-index:-1;
+    background:
+      radial-gradient(circle at 12% 6%, rgba(196,216,240,0.95), transparent 42%),
+      radial-gradient(circle at 88% 12%, rgba(220,224,248,0.85), transparent 46%),
+      radial-gradient(circle at 18% 90%, rgba(203,228,212,0.55), transparent 42%),
+      radial-gradient(circle at 92% 82%, rgba(205,226,246,0.8), transparent 48%),
+      linear-gradient(180deg,#EEF3FA,#E6EDF7 45%,#EAF1F9 100%);
+  }
+  img,svg{display:block;}
+  button{font-family:inherit;}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px;}
+  .tabular{font-variant-numeric:tabular-nums;}
+
+  /* ============ HERO ============ */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    overflow:hidden;
+    background:var(--bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .ambient{
+    position:absolute; inset:-30%;
+    background:
+      radial-gradient(circle at 50% 38%, rgba(255,255,255,0.95), transparent 60%),
+      radial-gradient(circle at 18% 82%, rgba(196,222,205,0.5), transparent 60%),
+      radial-gradient(circle at 82% 18%, rgba(200,220,244,0.75), transparent 60%);
+    filter:blur(50px);
+    z-index:0;
+  }
+  .hero-canvas{ position:absolute; inset:0; width:100%; height:100%; opacity:.9; z-index:1; }
+  .hero-content{
+    position:relative; z-index:2;
+    text-align:center; padding:2rem;
+    max-width:720px;
+  }
+  .eyebrow{
+    font-size:11px; letter-spacing:4px; text-transform:uppercase;
+    color:var(--ink-faint); font-weight:600;
+    opacity:0; animation:fadeup 1s .5s forwards;
+  }
+  .hero-title{
+    font-size:clamp(34px,6vw,58px); font-weight:650; letter-spacing:-0.02em;
+    margin:16px 0 14px; line-height:1.08;
+    opacity:0; animation:fadeup 1s .8s forwards;
+  }
+  .hero-title .grad{
+    background:linear-gradient(180deg,var(--ink),var(--accent) 130%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero-desc{
+    font-size:17px; color:var(--ink-soft); max-width:520px; margin:0 auto;
+    opacity:0; animation:fadeup 1s 1.1s forwards;
+  }
+  .hero-actions{
+    margin-top:2.1rem; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+    opacity:0; animation:fadeup 1s 1.4s forwards;
+  }
+  .btn-primary, .btn-ghost{
+    padding:13px 28px; font-size:13px; letter-spacing:1.4px; text-transform:uppercase;
+    border-radius:999px; font-weight:600; cursor:pointer; border:1px solid transparent;
+    transition:transform .2s var(--ease), box-shadow .2s var(--ease), background .2s;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff;
+    box-shadow:0 12px 26px rgba(92,137,194,.35);
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 16px 32px rgba(92,137,194,.4); }
+  .btn-ghost{
+    background:rgba(255,255,255,.55); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur);
+    color:var(--ink); border-color:rgba(255,255,255,.8); box-shadow:var(--shadow-sm);
+  }
+  .btn-ghost:hover{ transform:translateY(-2px); }
+  .hero-meta{
+    margin-top:3rem; display:flex; gap:28px; justify-content:center; flex-wrap:wrap;
+    opacity:0; animation:fadeup 1s 1.7s forwards;
+  }
+  .hero-meta div{ text-align:center; }
+  .hero-meta .n{ font-family:var(--font-mono); font-size:20px; font-weight:600; }
+  .hero-meta .l{ font-size:11px; color:var(--ink-faint); letter-spacing:.5px; margin-top:2px; }
+  .scroll-cue{
+    position:absolute; bottom:26px; left:50%; transform:translateX(-50%);
+    z-index:2; color:var(--ink-faint); opacity:0; animation:fadeup 1s 2s forwards, bob 2.4s 2.6s infinite;
+  }
+  @keyframes fadeup{ from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes bob{ 0%,100%{transform:translate(-50%,0);} 50%{transform:translate(-50%,6px);} }
+  @media (prefers-reduced-motion: reduce){
+    .eyebrow,.hero-title,.hero-desc,.hero-actions,.hero-meta,.scroll-cue{ animation:none; opacity:1; }
+  }
+
+  /* ============ STICKY HEADER / FILTERS ============ */
+  .toolbar{
+    position:sticky; top:0; z-index:40;
+    background:rgba(255,255,255,.45); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur);
+    border-bottom:1px solid rgba(255,255,255,.6);
+    transition:box-shadow .25s, background .25s;
+  }
+  .toolbar.scrolled{ box-shadow:0 8px 24px rgba(31,58,90,.08); }
+  .toolbar-inner{
+    max-width:1240px; margin:0 auto; padding:12px 28px;
+    display:flex; align-items:center; gap:22px; flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:9px; font-weight:650; font-size:14.5px; white-space:nowrap; }
+  .brand .dot{
+    width:9px; height:9px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 0 0 rgba(92,137,194,.55); animation:pulse-dot 2.4s infinite;
+  }
+  @keyframes pulse-dot{
+    0%{ box-shadow:0 0 0 0 rgba(92,137,194,.5);}
+    70%{ box-shadow:0 0 0 8px rgba(92,137,194,0);}
+    100%{ box-shadow:0 0 0 0 rgba(92,137,194,0);}
+  }
+  @media (prefers-reduced-motion: reduce){ .brand .dot{animation:none;} }
+  .filters{ display:flex; gap:10px; flex-wrap:wrap; margin-left:auto; }
+  .filter-field{ display:flex; flex-direction:column; gap:3px; }
+  .filter-field label{ font-size:9.5px; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-faint); font-weight:600; padding-left:2px;}
+  .filter-field select{
+    appearance:none; -webkit-appearance:none;
+    background:rgba(255,255,255,.55) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><path d="M1 1l4 4 4-4" stroke="%235A6B7F" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat right 13px center;
+    backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur);
+    border:1px solid rgba(255,255,255,.75); border-radius:999px; padding:7px 32px 7px 14px;
+    font-size:12.5px; color:var(--ink); font-family:inherit; cursor:pointer; min-width:150px;
+    transition:border-color .2s, background .2s;
+  }
+  .filter-field select:hover{ border-color:var(--accent); background-color:rgba(255,255,255,.75); }
+
+  /* ============ LAYOUT ============ */
+  .wrap{ max-width:1240px; margin:0 auto; padding:0 28px; }
+  section{ padding:56px 0; }
+  .section-head{ margin-bottom:26px; }
+  .section-eyebrow{ font-size:11px; letter-spacing:2.5px; text-transform:uppercase; color:var(--accent); font-weight:700; }
+  .section-title{ font-size:26px; font-weight:650; letter-spacing:-.01em; margin:6px 0 6px; }
+  .section-sub{ font-size:14.5px; color:var(--ink-soft); max-width:640px; }
+
+  /* ============ KPI CARDS ============ */
+  .kpi-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:16px; }
+  .kpi-card{
+    background:var(--surface); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur);
+    border:1px solid var(--line); border-radius:var(--radius-lg);
+    padding:20px 20px 18px; box-shadow:var(--shadow-sm); position:relative; overflow:hidden;
+    transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+  }
+  .kpi-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow-md); }
+  .kpi-top{ display:flex; align-items:flex-start; justify-content:space-between; }
+  .kpi-icon{
+    width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:var(--accent-soft); color:var(--accent);
+  }
+  .kpi-icon svg{ width:19px; height:19px; }
+  .kpi-delta{
+    font-size:11.5px; font-weight:700; padding:4px 8px; border-radius:20px; display:flex; align-items:center; gap:3px;
+  }
+  .kpi-delta.up{ color:var(--good); background:var(--good-soft); }
+  .kpi-delta.down{ color:var(--bad); background:var(--bad-soft); }
+  .kpi-delta.flat{ color:var(--ink-soft); background:var(--surface-2); }
+  .kpi-value{ font-family:var(--font-mono); font-size:34px; font-weight:600; margin-top:16px; letter-spacing:-.01em; }
+  .kpi-value .unit{ font-size:16px; color:var(--ink-faint); font-weight:500; margin-left:2px; }
+  .kpi-label{ font-size:12.5px; color:var(--ink-soft); margin-top:5px; }
+  .kpi-hint{ font-size:10px; color:var(--ink-faint); margin-top:2px; line-height:1.3; }
+
+  /* ============ INTERACTIVE COMPARISON ============ */
+  .compare-grid{ display:grid; grid-template-columns:1.1fr 1fr; gap:20px; align-items:stretch; }
+  .panel-card{
+    background:var(--surface); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur);
+    border:1px solid var(--line); border-radius:var(--radius-lg);
+    padding:22px; box-shadow:var(--shadow-sm);
+  }
+  .bar-list{ display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+  .bar-row{
+    display:grid; grid-template-columns:216px 1fr 52px; align-items:center; gap:12px;
+    cursor:pointer; padding:8px 8px; border-radius:10px; border:1px solid transparent;
+    transition:background .2s, border-color .2s, transform .2s;
+  }
+  .bar-row:hover{ background:var(--surface-2); }
+  .bar-row.active{ background:var(--accent-soft); border-color:rgba(92,137,194,.3); }
+  .bar-row .dname{ font-size:12.5px; font-weight:600; display:flex; align-items:center; gap:6px; min-width:0; }
+  .bar-row .dname svg{ width:15px; height:15px; color:var(--ink-faint); flex:none; }
+  .bar-row .dname-text{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+  .bar-track{ background:var(--surface-2); border-radius:20px; height:11px; overflow:hidden; position:relative; }
+  .bar-fill{
+    height:100%; border-radius:20px; background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    width:0%; transition:width var(--dur) var(--ease), background .3s;
+  }
+  .bar-row.best .bar-fill{ background:linear-gradient(90deg,#0E8F63,#3FBE8F); }
+  .bar-row.worst .bar-fill{ background:linear-gradient(90deg,#C1443A,#E07A6F); }
+  .bar-val{ font-family:var(--font-mono); font-size:13px; font-weight:600; text-align:right; }
+  .tag-best,.tag-worst{
+    font-size:9px; font-weight:700; letter-spacing:.4px; text-transform:uppercase;
+    padding:2px 5px; border-radius:6px; flex:none; white-space:nowrap;
+  }
+  .tag-best{ background:var(--good-soft); color:var(--good); }
+  .tag-worst{ background:var(--bad-soft); color:var(--bad); }
+
+  .detail-empty{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; height:100%; min-height:280px; color:var(--ink-faint); gap:10px; }
+  .detail-empty svg{ width:34px; height:34px; opacity:.5; }
+  .detail-body{ display:none; animation:fadein .45s var(--ease); }
+  .detail-body.show{ display:block; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+  .detail-header{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .detail-icon{ width:44px; height:44px; border-radius:50%; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center; }
+  .detail-icon svg{ width:21px; height:21px; }
+  .detail-name{ font-size:17px; font-weight:650; }
+  .detail-sub{ font-size:12px; color:var(--ink-faint); }
+  .detail-stats{ display:flex; gap:10px; justify-content:center; margin:0 0 16px; flex-wrap:wrap; }
+  .dstat{
+    background:var(--surface-2); border:1px solid var(--line-strong); border-radius:14px;
+    padding:10px 18px; text-align:center; min-width:84px;
+  }
+  .dstat .v{ font-family:var(--font-mono); font-size:19px; font-weight:650; color:var(--ink); }
+  .dstat .l{ font-size:9.5px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.5px; margin-top:2px; }
+  .radar-wrap{ display:flex; justify-content:center; margin:6px 0 8px; }
+  .callouts{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+  .callout{ border-radius:10px; padding:11px 12px; font-size:12.5px; }
+  .callout.strong{ background:var(--good-soft); color:#0b6b4b; }
+  .callout.weak{ background:var(--bad-soft); color:#8f342c; }
+  .callout b{ display:block; font-size:12.5px; margin-bottom:2px; }
+
+  /* ============ CHARTS GRID ============ */
+  .charts-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .chart-card h3{ font-size:14.5px; font-weight:650; margin:0 0 2px; display:flex; align-items:center; gap:6px; }
+  .chart-card .chart-sub{ font-size:11.5px; color:var(--ink-faint); margin-bottom:14px; }
+  .info-icon{
+    display:inline-flex; align-items:center; justify-content:center; width:15px; height:15px; border-radius:50%;
+    background:var(--surface-2); border:1px solid var(--line-strong); color:var(--ink-faint);
+    font-size:10px; font-weight:700; font-style:normal; cursor:help; flex:none;
+  }
+  .legend{ display:flex; gap:14px; flex-wrap:wrap; margin-top:10px; font-size:11.5px; color:var(--ink-soft); }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .legend i{ width:10px; height:10px; border-radius:3px; display:inline-block; }
+  .chart-hover-hint{ font-size:10.5px; color:var(--ink-faint); margin-top:2px; }
+  .enps-note{
+    margin-top:10px; padding:9px 12px; border-radius:10px; background:var(--surface-2);
+    border:1px solid var(--line-strong); font-size:11px; color:var(--ink-soft); line-height:1.5;
+  }
+  .enps-note b{ color:var(--ink); }
+  .chart-tooltip{
+    position:absolute; pointer-events:none; z-index:20; background:rgba(30,43,60,.92); color:#fff;
+    border-radius:10px; padding:8px 12px; font-size:11.5px; line-height:1.5; box-shadow:0 10px 24px rgba(31,58,90,.25);
+    opacity:0; transform:translate(-50%,-100%) translateY(-8px); transition:opacity .15s;
+    white-space:nowrap;
+  }
+  .chart-tooltip.show{ opacity:1; }
+  .chart-tooltip b{ font-family:var(--font-mono); }
+  .chart-tooltip .tt-eng{ color:#9FC4EE; }
+  .chart-tooltip .tt-enps{ color:#D7C8FF; }
+  .trend-svg-wrap{ position:relative; }
+  .donut-wrap{ display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .donut-legend{ display:grid; grid-template-columns:1fr 1fr; gap:8px 18px; width:100%; }
+  .donut-item{ display:flex; align-items:center; justify-content:space-between; font-size:12px; gap:8px; }
+  .donut-item .dl{ display:flex; align-items:center; gap:8px; color:var(--ink-soft); min-width:0; }
+  .donut-item .dl span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .donut-item i{ width:9px; height:9px; border-radius:3px; flex:none; }
+  .donut-item .dv{ font-family:var(--font-mono); font-weight:600; flex:none; }
+
+  table.hr-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.hr-table th, table.hr-table td{ padding:9px 10px; text-align:left; border-bottom:1px solid var(--line-strong); }
+  table.hr-table th:not(:first-child), table.hr-table td:not(.dname-cell){ text-align:right; }
+  table.hr-table th{
+    font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--ink-faint); font-weight:700;
+    cursor:pointer; user-select:none; white-space:nowrap;
+  }
+  table.hr-table th:hover{ color:var(--accent); }
+  table.hr-table td{ font-family:var(--font-mono); }
+  table.hr-table td.dname-cell{ font-family:var(--font-ui); font-weight:600; white-space:nowrap; }
+  table.hr-table td.dname-cell svg{ display:inline-block; vertical-align:-2px; width:14px; height:14px; margin-right:6px; color:var(--ink-faint); flex:none; }
+  table.hr-table tbody tr{ transition:background .2s; }
+  table.hr-table tbody tr:hover{ background:var(--surface-2); }
+  .heat-cell{ border-radius:6px; padding:3px 8px; display:inline-block; min-width:44px; text-align:center; }
+
+  /* ============ RANKING CARDS ============ */
+  .rank-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .rank-card{
+    background:var(--surface); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur);
+    border:1px solid var(--line); border-radius:var(--radius-md); padding:18px;
+    box-shadow:var(--shadow-sm); cursor:pointer; transition:transform .3s var(--ease), box-shadow .3s var(--ease);
+    position:relative;
+  }
+  .rank-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow-md); }
+  .badge{
+    font-size:9px; font-weight:700; letter-spacing:.4px; text-transform:uppercase;
+    padding:3px 7px; border-radius:20px; flex:none; white-space:nowrap; margin-left:auto;
+  }
+  .badge.leader{ background:var(--good-soft); color:var(--good); }
+  .badge.watch{ background:var(--warn-soft); color:var(--warn); }
+  .rank-top{ display:flex; align-items:center; gap:10px; }
+  .rank-num{ font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); font-weight:700; flex:none; }
+  .rank-icon{ width:36px; height:36px; border-radius:50%; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center; flex:none; }
+  .rank-icon svg{ width:17px; height:17px; }
+  .rank-id{ min-width:0; }
+  .rank-name{ font-size:13px; font-weight:650; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rank-headcount{ font-size:10.5px; color:var(--ink-faint); }
+  .rank-score{ font-family:var(--font-mono); font-size:26px; font-weight:600; margin-top:12px; }
+  .rank-score .u{ font-size:13px; color:var(--ink-faint); }
+  .rank-spark{ margin-top:8px; }
+  .rank-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
+  .rank-delta{ font-size:11px; font-weight:700; }
+  .rank-delta.up{ color:var(--good); } .rank-delta.down{ color:var(--bad); }
+
+  /* ============ FOOTER ============ */
+  .context-box{
+    background:var(--surface); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur);
+    border:1px solid var(--line); border-radius:var(--radius-md);
+    padding:18px 20px; font-size:12.5px; color:var(--ink-soft); line-height:1.7; margin-bottom:22px;
+  }
+  .context-box b{ color:var(--ink); }
+  footer{ border-top:1px solid var(--line-strong); padding:34px 0 46px; }
+  .footer-grid{ display:flex; justify-content:space-between; align-items:flex-end; gap:20px; flex-wrap:wrap; }
+  .disclaimer{
+    font-size:11.5px; color:var(--ink-faint); max-width:640px; padding:10px 14px; border-left:2px solid var(--line-strong);
+  }
+  .footer-brand{ font-size:12px; color:var(--ink-faint); text-align:right; }
+
+  /* ============ ANIMACJE WEJŚCIA / SCROLL-REVEAL ============ */
+  .reveal{
+    opacity:0; transform:translateY(22px);
+    transition:opacity .7s var(--ease), transform .7s var(--ease);
+  }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+  .stagger-item{
+    opacity:0; transform:translateY(14px) scale(.985);
+    animation:stagger-in .6s var(--ease) forwards;
+  }
+  @keyframes stagger-in{ to{ opacity:1; transform:translateY(0) scale(1); } }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .stagger-item{ opacity:1; transform:none; animation:none; }
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:980px){
+    .kpi-grid{ grid-template-columns:repeat(2,1fr); }
+    .compare-grid{ grid-template-columns:1fr; }
+    .charts-grid{ grid-template-columns:1fr; }
+    .rank-grid{ grid-template-columns:repeat(2,1fr); }
+    .toolbar-inner{ flex-direction:column; align-items:flex-start; }
+    .filters{ margin-left:0; }
+  }
+  @media (max-width:560px){
+    .kpi-grid{ grid-template-columns:1fr; }
+    .rank-grid{ grid-template-columns:1fr; }
+    .wrap{ padding:0 18px; }
+    .bar-row{ grid-template-columns:128px 1fr 44px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<div class="hero">
+  <div class="ambient"></div>
+  <canvas id="heroCanvas" class="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="eyebrow">Raport analityczny HR · rok 2025</div>
+    <h1 class="hero-title">Jak naprawdę<br><span class="grad">czuje się Twój zespół</span></h1>
+    <p class="hero-desc">Zespół HR co kwartał zbiera oceny okresowe i ankiety zaangażowania od <span id="hero-headcount-inline">…</span> pracowników w <span id="hero-depts-inline">…</span> działach. Ten panel łączy te dane w jeden, żywy obraz organizacji.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('panel').scrollIntoView({behavior:'smooth'})">Zobacz panel ↓</button>
+      <button class="btn-ghost" onclick="document.getElementById('ranking').scrollIntoView({behavior:'smooth'})">Ranking działów</button>
+    </div>
+    <div class="hero-meta">
+      <div><div class="n tabular" id="hero-headcount">–</div><div class="l">Pracowników objętych badaniem</div></div>
+      <div><div class="n tabular" id="hero-depts">–</div><div class="l">Działów</div></div>
+      <div><div class="n tabular" id="hero-quarters">–</div><div class="l">Kwartałów danych</div></div>
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 4v15M6 14l6 6 6-6"/></svg>
+  </div>
+</div>
+
+<!-- ================= TOOLBAR / FILTERS ================= -->
+<div class="toolbar" id="toolbar">
+  <div class="toolbar-inner">
+    <div class="brand"><span class="dot"></span> Puls Zespołu — Panel HR</div>
+    <div class="filters">
+      <div class="filter-field">
+        <label for="f-period">Okres</label>
+        <select id="f-period"></select>
+      </div>
+      <div class="filter-field">
+        <label for="f-dept">Dział</label>
+        <select id="f-dept"></select>
+      </div>
+      <div class="filter-field">
+        <label for="f-loc">Lokalizacja</label>
+        <select id="f-loc"></select>
+      </div>
+      <div class="filter-field">
+        <label for="f-level">Poziom stanowiska</label>
+        <select id="f-level"></select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="panel" class="wrap">
+
+  <!-- ================= KPI ================= -->
+  <section id="kpi-section">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">Wskaźniki kluczowe</div>
+      <div class="section-title">Kondycja zespołu w jednym spojrzeniu</div>
+      <div class="section-sub">Wartości przeliczane automatycznie zgodnie z wybranymi filtrami okresu, działu, lokalizacji i poziomu stanowiska.</div>
+    </div>
+    <div class="kpi-grid" id="kpi-grid"></div>
+  </section>
+
+  <!-- ================= INTERACTIVE COMPARISON ================= -->
+  <section>
+    <div class="section-head reveal">
+      <div class="section-eyebrow">Analiza porównawcza</div>
+      <div class="section-title">Zaangażowanie według działów</div>
+      <div class="section-sub">Kliknij dział na liście, aby zobaczyć rozkład czynników satysfakcji stojących za jego wynikiem. Najlepszy i najsłabszy wynik są oznaczone automatycznie.</div>
+    </div>
+    <div class="compare-grid">
+      <div class="panel-card reveal">
+        <div class="bar-list" id="compare-bars"></div>
+      </div>
+      <div class="panel-card reveal" id="detail-panel">
+        <div class="detail-empty" id="detail-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
+          <div>Wybierz dział z listy po lewej,<br>aby zobaczyć szczegółową analizę czynników</div>
+        </div>
+        <div class="detail-body" id="detail-body"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHARTS GRID ================= -->
+  <section>
+    <div class="section-head reveal">
+      <div class="section-eyebrow">Trendy i struktura</div>
+      <div class="section-title">Wskaźniki w czasie i w podziale na organizację</div>
+      <div class="section-sub">Cztery uzupełniające się perspektywy: dynamika w czasie, struktura zaangażowania, ranking odpowiedzi na ankiety oraz zestawienie porównawcze wszystkich działów.</div>
+    </div>
+    <div class="charts-grid">
+
+      <div class="panel-card chart-card reveal">
+        <h3>Trend zaangażowania i eNPS
+          <span class="info-icon" title="eNPS (Employee Net Promoter Score) – różnica % pracowników-promotorów i pracowników-krytyków firmy jako miejsca pracy. Skala od -100 do +100, im wyżej tym lepiej.">i</span>
+        </h3>
+        <div class="chart-sub">Dane kwartalne, 12 ostatnich kwartałów</div>
+        <div class="trend-svg-wrap">
+          <svg id="trend-chart" viewBox="0 0 520 240" style="width:100%; height:auto;"></svg>
+          <div class="chart-tooltip" id="trend-tooltip"></div>
+        </div>
+        <div class="chart-hover-hint">Najedź na punkt na wykresie, aby zobaczyć wartości dla danego kwartału</div>
+        <div class="legend">
+          <span><i style="background:var(--accent)"></i>Wskaźnik zaangażowania</span>
+          <span><i style="background:var(--accent-2); opacity:.75"></i>eNPS (skala pomocnicza)</span>
+        </div>
+        <div class="enps-note"><b>Czym jest eNPS?</b> Employee Net Promoter Score — odsetek pracowników-promotorów minus odsetek pracowników-krytyków firmy jako miejsca pracy. Skala od -100 do +100, im wyżej, tym lepiej.</div>
+      </div>
+
+      <div class="panel-card chart-card reveal">
+        <h3>Segmentacja zaangażowania zespołu</h3>
+        <div class="chart-sub">Cała organizacja · średnia za 2025</div>
+        <div class="donut-wrap">
+          <svg id="donut-chart" viewBox="0 0 200 200" style="width:180px; height:180px; flex:none;"></svg>
+          <div class="donut-legend" id="donut-legend"></div>
+        </div>
+      </div>
+
+      <div class="panel-card chart-card reveal">
+        <h3>Ranking działów wg response rate ankiety</h3>
+        <div class="chart-sub">Odsetek pracowników, którzy wypełnili ankietę</div>
+        <div class="bar-list" id="ranking-bars"></div>
+      </div>
+
+      <div class="panel-card chart-card reveal">
+        <h3>Tabela porównawcza działów</h3>
+        <div class="chart-sub">Kliknij nagłówek kolumny, aby posortować</div>
+        <div style="overflow-x:auto;">
+          <table class="hr-table" id="compare-table"></table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= RANKING CARDS ================= -->
+  <section id="ranking">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">Ranking</div>
+      <div class="section-title">Działy uszeregowane wg wyniku ogólnego</div>
+      <div class="section-sub">Wynik ogólny łączy zaangażowanie, satysfakcję i eNPS. Minitrend pokazuje ostatnie 6 kwartałów.</div>
+    </div>
+    <div class="rank-grid" id="rank-grid"></div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <div class="context-box reveal">
+      <b>Kontekst prawny i metodologiczny.</b> Kodeks pracy nie nakłada w sektorze prywatnym obowiązku przeprowadzania ocen okresowych — to narzędzie wdrażane dobrowolnie w ramach polityki personalnej firmy. Art. 94 pkt 9 k.p. zobowiązuje jednak pracodawcę do stosowania obiektywnych i sprawiedliwych kryteriów oceny pracy. Ponieważ wyniki ocen i ankiet stanowią dane osobowe, ich przetwarzanie podlega RODO — dobrą praktyką jest anonimizacja odpowiedzi, prezentowanie wyników wyłącznie w agregacji na poziomie zespołów oraz poszanowanie godności i zasady równego traktowania pracowników przy każdej publikacji wyników.
+    </div>
+    <div class="footer-grid">
+      <div class="disclaimer">
+        Wszystkie dane, nazwy działów i wartości liczbowe prezentowane w tym panelu są <b>danymi syntetycznymi / demonstracyjnymi</b>, wygenerowanymi wyłącznie w celach poglądowych i nie przedstawiają rzeczywistej organizacji ani rzeczywistych pracowników.
+      </div>
+      <div class="footer-brand">Puls Zespołu · Panel HR<br>Wygenerowano <span id="gen-date"></span></div>
+    </div>
+  </footer>
+
+</div>
+
+
+<script id="dashboard-data" type="application/json">__DATA_JSON__</script>
+<script>
+window.__DASHBOARD_DATA__ = JSON.parse(document.getElementById("dashboard-data").textContent);
+</script>
+<script>
+(function(){
+"use strict";
+var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* =========================================================================
+   DANE: wszystko poniżej pochodzi z DATA, wygenerowanego przez Python
+   (generate_dashboard.py) na podstawie dane_hr.xlsx. Ten plik NIE liczy
+   żadnych wskaźników biznesowych – wyłącznie odczytuje gotowe wartości
+   i rysuje/animuje. Jedyna "matematyka" tutaj to geometria rysowania
+   wykresów SVG (przeliczenie wartości na współrzędne x/y) oraz interpolacja
+   koloru heatmapy na podstawie zakresów min/max dostarczonych przez Python.
+   ========================================================================= */
+var DATA = window.__DASHBOARD_DATA__;
+
+/* ================= ICONS ================= */
+var ICON = {
+  pulse:'<path d="M3 12h4l2.5-7L14 19l2-7h5" stroke-linecap="round" stroke-linejoin="round"/>',
+  survey:'<path d="M4 5h16v11H8l-4 4V5z" stroke-linejoin="round"/><path d="M8 9h8M8 12h5" stroke-linecap="round"/>',
+  gauge:'<path d="M4 15a8 8 0 1 1 16 0" /><path d="M12 15l4-5" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor" stroke="none"/>',
+  star:'<path d="M12 3l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 17l-5.6 3.1 1.4-6.3-4.8-4.3 6.4-.6z" stroke-linejoin="round"/>',
+  alert:'<path d="M12 4 2 20h20L12 4z" stroke-linejoin="round"/><path d="M12 10v5" stroke-linecap="round"/><circle cx="12" cy="17.5" r=".9" fill="currentColor" stroke="none"/>',
+  sales:'<path d="M4 18l5-6 4 3 7-9" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6h5v5" stroke-linecap="round" stroke-linejoin="round"/>',
+  headset:'<path d="M4 13v-1a8 8 0 0 1 16 0v1" stroke-linecap="round"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19v1a3 3 0 0 1-3 3h-2" stroke-linecap="round"/>',
+  chip:'<rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3" stroke-linecap="round"/>',
+  megaphone:'<path d="M3 10v4h3l7 4V6l-7 4H3z" stroke-linejoin="round"/><path d="M14 8.5a4 4 0 0 1 0 7" stroke-linecap="round"/>',
+  box:'<path d="M3 8l9-5 9 5-9 5-9-5z" stroke-linejoin="round"/><path d="M3 8v9l9 5 9-5V8" stroke-linejoin="round"/><path d="M12 13v9" />',
+  coin:'<circle cx="12" cy="12" r="8"/><path d="M12 7v10M9.5 9.5c0-1.4 1.2-2 2.5-2s2.5.7 2.5 2-1.2 1.7-2.5 2-2.5.7-2.5 2 1.2 2 2.5 2 2.5-.6 2.5-2" stroke-linecap="round"/>',
+  people:'<circle cx="8.5" cy="8" r="3"/><path d="M2 20c0-3.3 2.9-5.5 6.5-5.5S15 16.7 15 20" stroke-linecap="round"/><circle cx="17" cy="9" r="2.4"/><path d="M15.3 14.6c2.7.4 4.7 2.4 4.7 5.4" stroke-linecap="round"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/>'
+};
+function svgIcon(key){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">'+(ICON[key]||ICON.people)+'</svg>'; }
+function deptById(id){ return DATA.departments.filter(function(d){return d.id===id;})[0]; }
+
+/* ================= STATE ================= */
+var state = { period: DATA.periods[0].id, dept:'all', loc:'all', level:'all', selectedDept:null, sortCol:'engagement', sortDir:-1 };
+function k(){ var a=Array.prototype.slice.call(arguments); return a.join('::'); }
+
+/* ================= LOOKUPS (proste odczyty z DATA, zero liczenia) ================= */
+function kpiFor(period, dept, loc, level){ return DATA.kpi[k(period,dept,loc,level)]; }
+function trendFor(dept, loc, level){ return DATA.trend[k(dept,loc,level)]; }
+function sparkFor(dept, loc, level){ return DATA.spark[k(dept,loc,level)]; }
+function driversFor(dept, loc, level){ return DATA.drivers[k(dept,loc,level)]; }
+function tableRangesFor(period, loc, level){ return DATA.table_ranges[k(period,loc,level)]; }
+function compareOrderFor(period, loc, level){ return DATA.compare_order[k(period,loc,level)]; }
+function responseOrderFor(loc, level){ return DATA.response_order[k(loc,level)]; }
+function rankOrderFor(period, loc, level){ return DATA.rank_order[k(period,loc,level)]; }
+
+/* ================= COUNT-UP (czysta animacja, nie liczy wskaźników) ================= */
+function animateNumberNode(node, end, decimals, signed){
+  if(REDUCED){ node.textContent=(signed&&end>0?'+':'')+end.toFixed(decimals); return; }
+  var startTime=null, duration=1200;
+  function step(ts){
+    if(!startTime) startTime=ts;
+    var p=Math.min(1,(ts-startTime)/duration);
+    var eased=1-Math.pow(1-p,3);
+    var val=end*eased;
+    node.textContent=(signed&&val>0?'+':'')+val.toFixed(decimals);
+    if(p<1) requestAnimationFrame(step); else node.textContent=(signed&&end>0?'+':'')+end.toFixed(decimals);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ================= FILTERS ================= */
+function populateSelect(sel, items, cur){
+  sel.innerHTML = items.map(function(it){ return '<option value="'+it.id+'"'+(it.id===cur?' selected':'')+'>'+it.label+'</option>'; }).join('');
+}
+function initFilters(){
+  populateSelect(document.getElementById('f-period'), DATA.periods, state.period);
+  var deptOpts = [{id:'all',label:'Wszystkie działy'}].concat(DATA.departments.map(function(d){return {id:d.id,label:d.name};}));
+  populateSelect(document.getElementById('f-dept'), deptOpts, state.dept);
+  populateSelect(document.getElementById('f-loc'), DATA.locations, state.loc);
+  populateSelect(document.getElementById('f-level'), DATA.levels, state.level);
+
+  document.getElementById('f-period').addEventListener('change', function(e){ state.period=e.target.value; renderAll(); });
+  document.getElementById('f-dept').addEventListener('change', function(e){ state.dept=e.target.value; renderAll(); });
+  document.getElementById('f-loc').addEventListener('change', function(e){ state.loc=e.target.value; renderAll(); });
+  document.getElementById('f-level').addEventListener('change', function(e){ state.level=e.target.value; renderAll(); });
+}
+
+/* ================= KPI ================= */
+var KPI_DEFS = [
+  {key:'engagement', label:'Wskaźnik zaangażowania', icon:'pulse', decimals:1, unit:'pkt', good:'up'},
+  {key:'response', label:'Response rate ankiety', icon:'survey', decimals:0, unit:'%', good:'up'},
+  {key:'enps', label:'eNPS', hint:'promotorzy − krytycy, skala -100…+100', icon:'gauge', decimals:0, unit:'', good:'up', signed:true},
+  {key:'performance', label:'Śr. ocena okresowa', icon:'star', decimals:1, unit:'/5', good:'up'},
+  {key:'turnover', label:'Ryzyko rotacji', icon:'alert', decimals:0, unit:'%', good:'down'}
+];
+function renderKPIs(){
+  var data = kpiFor(state.period, state.dept, state.loc, state.level);
+  var grid = document.getElementById('kpi-grid');
+  grid.innerHTML = KPI_DEFS.map(function(def, i){
+    return '<div class="kpi-card stagger-item" style="animation-delay:'+(i*70)+'ms">'+
+      '<div class="kpi-top"><div class="kpi-icon">'+svgIcon(def.icon)+'</div>'+
+      '<div class="kpi-delta flat" data-kpi="'+def.key+'"></div></div>'+
+      '<div class="kpi-value tabular" data-val="'+def.key+'">0<span class="unit">'+def.unit+'</span></div>'+
+      '<div class="kpi-label">'+def.label+'</div>'+
+      (def.hint ? '<div class="kpi-hint">'+def.hint+'</div>' : '')+
+    '</div>';
+  }).join('');
+
+  KPI_DEFS.forEach(function(def){
+    var val = data[def.key];
+    var el = grid.querySelector('[data-val="'+def.key+'"]');
+    el.textContent='';
+    var numNode = document.createTextNode('0');
+    el.appendChild(numNode);
+    var unitEl = document.createElement('span'); unitEl.className='unit'; unitEl.textContent=def.unit;
+    el.appendChild(unitEl);
+    animateNumberNode(numNode, val, def.decimals, def.signed);
+
+    var deltaEl = grid.querySelector('[data-kpi="'+def.key+'"]');
+    var deltaVal = def.key==='engagement' ? data.engagement_delta : data.static_deltas[def.key];
+    var isGood = def.good==='up' ? deltaVal>=0 : deltaVal<=0;
+    deltaEl.className = 'kpi-delta ' + (Math.abs(deltaVal)<0.05 ? 'flat' : (isGood?'up':'down'));
+    var arrow = deltaVal>=0 ? '▲' : '▼';
+    deltaEl.textContent = arrow+' '+Math.abs(deltaVal).toFixed(def.key==='performance'?2:1)+(def.unit==='%'||def.unit==='pkt'?' pp':'');
+  });
+}
+
+/* ================= COMPARISON BARS (kolejność i best/worst już policzone w Pythonie) ================= */
+function renderCompareBars(){
+  var order = compareOrderFor(state.period, state.loc, state.level); // [{dept_id, value}], posortowane malejąco
+  var bestId = order[0].dept_id, worstId = order[order.length-1].dept_id;
+
+  var html = order.map(function(row, i){
+    var d = deptById(row.dept_id);
+    var isBest = row.dept_id===bestId, isWorst = row.dept_id===worstId;
+    var cls = 'bar-row stagger-item'+(isBest?' best':'')+(isWorst?' worst':'')+(state.selectedDept===d.id?' active':'');
+    return '<div class="'+cls+'" style="animation-delay:'+(i*45)+'ms" data-dept="'+d.id+'" tabindex="0" role="button" aria-label="Pokaż szczegóły działu '+d.name+'">'+
+      '<div class="dname" title="'+d.name+'">'+svgIcon(d.icon)+'<span class="dname-text">'+d.name+'</span>'+(isBest?'<span class="tag-best">Lider</span>':'')+(isWorst?'<span class="tag-worst">Uwaga</span>':'')+'</div>'+
+      '<div class="bar-track"><div class="bar-fill" style="width:'+row.value+'%"></div></div>'+
+      '<div class="bar-val tabular">'+row.value.toFixed(1)+'</div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('compare-bars').innerHTML = html;
+
+  Array.prototype.forEach.call(document.querySelectorAll('#compare-bars .bar-row'), function(row){
+    row.addEventListener('click', function(){ selectDept(row.getAttribute('data-dept')); });
+    row.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); selectDept(row.getAttribute('data-dept')); } });
+  });
+}
+
+function selectDept(id){
+  state.selectedDept = id;
+  renderCompareBars();
+  renderDetail();
+}
+
+function renderDetail(){
+  var empty = document.getElementById('detail-empty');
+  var body = document.getElementById('detail-body');
+  if(!state.selectedDept){ empty.style.display='flex'; body.classList.remove('show'); return; }
+  empty.style.display='none';
+
+  var d = deptById(state.selectedDept);
+  var drv = driversFor(d.id, state.loc, state.level); // {comp,growth,balance,leader,team,best_key,worst_key} – już policzone
+  var kpi = kpiFor(state.period, d.id, state.loc, state.level);
+  var driverList = ['comp','growth','balance','leader','team'].map(function(key){
+    return {key:key, label:DATA.driver_labels[key], val:drv[key]};
+  });
+
+  body.innerHTML =
+    '<div class="detail-header"><div class="detail-icon">'+svgIcon(d.icon)+'</div>'+
+      '<div><div class="detail-name">'+d.name+'</div><div class="detail-sub">'+d.headcount+' pracowników</div></div></div>'+
+    '<div class="detail-stats">'+
+      '<div class="dstat"><div class="v tabular">'+kpi.engagement.toFixed(1)+'</div><div class="l">Zaangażowanie</div></div>'+
+      '<div class="dstat"><div class="v tabular">'+(kpi.enps>0?'+':'')+kpi.enps.toFixed(0)+'</div><div class="l">eNPS</div></div>'+
+      '<div class="dstat"><div class="v tabular">'+kpi.satisfaction.toFixed(1)+'/5</div><div class="l">Satysfakcja</div></div>'+
+    '</div>'+
+    '<div class="radar-wrap">'+radarSVG(driverList, drv.best_key, drv.worst_key)+'</div>'+
+    '<div class="callouts">'+
+      '<div class="callout strong"><b>Najmocniejsza strona</b>'+DATA.driver_labels[drv.best_key]+' · '+drv[drv.best_key].toFixed(0)+'/100</div>'+
+      '<div class="callout weak"><b>Obszar do poprawy</b>'+DATA.driver_labels[drv.worst_key]+' · '+drv[drv.worst_key].toFixed(0)+'/100</div>'+
+    '</div>';
+  body.classList.add('show');
+}
+
+/* Geometria rysowania (nie jest to obliczenie wskaźnika biznesowego – tylko
+   przełożenie już gotowych wartości 0-100 na współrzędne wielokąta SVG).
+   Etykiety czynników siedzą bezpośrednio przy wierzchołkach: każda nazwa jest
+   rozbita na 2 krótkie linie (żeby zmieściła się bez zachodzenia na sąsiadów),
+   wyrównanie tekstu (start/środek/koniec) dobierane jest wg położenia wierzchołka,
+   a pod nazwą pokazana jest wartość, podświetlona kolorem gdy to najlepszy/najsłabszy czynnik. */
+var DRIVER_LINES = {
+  comp:['Wynagrodzenie','i benefity'],
+  growth:['Rozwój','zawodowy'],
+  balance:['Równowaga','praca–życie'],
+  leader:['Relacja z','przełożonym'],
+  team:['Współpraca','w zespole']
+};
+function radarSVG(drivers, bestKey, worstKey){
+  var cx=180, cy=148, R=76, n=drivers.length;
+  var rings=[0.25,0.5,0.75,1];
+  var poly = function(scale){
+    return drivers.map(function(dd,i){
+      var ang = -Math.PI/2 + i*2*Math.PI/n;
+      var r = R*scale;
+      return (cx+r*Math.cos(ang)).toFixed(1)+','+(cy+r*Math.sin(ang)).toFixed(1);
+    }).join(' ');
+  };
+  var gridPolys = rings.map(function(s){ return '<polygon points="'+poly(s)+'" fill="none" stroke="var(--line-strong)" stroke-width="1"/>'; }).join('');
+  var axes = drivers.map(function(dd,i){
+    var ang = -Math.PI/2 + i*2*Math.PI/n;
+    var x2 = cx+R*Math.cos(ang), y2=cy+R*Math.sin(ang);
+    return '<line x1="'+cx+'" y1="'+cy+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="var(--line-strong)" stroke-width="1"/>';
+  }).join('');
+  var dataPts = drivers.map(function(dd,i){
+    var ang = -Math.PI/2 + i*2*Math.PI/n;
+    var r = R*(dd.val/100);
+    return (cx+r*Math.cos(ang)).toFixed(1)+','+(cy+r*Math.sin(ang)).toFixed(1);
+  }).join(' ');
+  var dots = drivers.map(function(dd,i){
+    var ang = -Math.PI/2 + i*2*Math.PI/n;
+    var r = R*(dd.val/100);
+    var isBest = dd.key===bestKey, isWorst = dd.key===worstKey;
+    var col = isBest?'var(--good)':(isWorst?'var(--bad)':'var(--accent)');
+    return '<circle cx="'+(cx+r*Math.cos(ang)).toFixed(1)+'" cy="'+(cy+r*Math.sin(ang)).toFixed(1)+'" r="4" fill="'+col+'" stroke="#fff" stroke-width="1.5"/>';
+  }).join('');
+  var lineH = 12.5;
+  var labels = drivers.map(function(dd,i){
+    var ang = -Math.PI/2 + i*2*Math.PI/n;
+    var cosA = Math.cos(ang), sinA = Math.sin(ang);
+    var lx = cx+(R+27)*cosA, ly = cy+(R+22)*sinA;
+    var anchor = cosA>0.2 ? 'start' : (cosA<-0.2 ? 'end' : 'middle');
+    var lines = DRIVER_LINES[dd.key] || [dd.label];
+    var isBest = dd.key===bestKey, isWorst = dd.key===worstKey;
+    var valColor = isBest?'var(--good)':(isWorst?'var(--bad)':'var(--ink)');
+    var startDy = -(((lines.length-1)*lineH)/2) - (sinA<-0.3 ? lineH*0.4 : 0);
+    var tspans = lines.map(function(txt, li){
+      return '<tspan x="'+lx.toFixed(1)+'" dy="'+(li===0?startDy.toFixed(1):lineH)+'">'+txt+'</tspan>';
+    }).join('');
+    var valTspan = '<tspan x="'+lx.toFixed(1)+'" dy="'+(lineH+3)+'" font-family="var(--font-mono)" font-size="12.5" font-weight="700" fill="'+valColor+'">'+dd.val.toFixed(0)+'</tspan>';
+    return '<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="'+anchor+'" font-size="10.5" font-weight="600" fill="var(--ink-soft)" font-family="var(--font-ui)">'+tspans+valTspan+'</text>';
+  }).join('');
+  return '<svg viewBox="0 0 360 300" style="width:100%; max-width:360px; height:auto; overflow:visible;">'+gridPolys+axes+
+    '<polygon points="'+dataPts+'" fill="rgba(92,137,194,.18)" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>'+
+    dots+labels+'</svg>';
+}
+
+/* ================= TREND CHART (dane gotowe, tylko rysowanie) ================= */
+function renderTrendChart(){
+  var t = trendFor(state.dept, state.loc, state.level); // {engagement:[12], enps:[12]}
+  var eng = t.engagement, enps = t.enps;
+  var W=520,H=240,padL=32,padR=10,padT=14,padB=26;
+  var innerW=W-padL-padR, innerH=H-padT-padB;
+  var n=eng.length;
+  function xFor(i){ return padL + innerW*(i/(n-1)); }
+  function yForEng(v){ return padT + innerH*(1-(v/100)); }
+  var enpsMin=-30, enpsMax=45;
+  function yForEnps(v){ return padT + innerH*(1-((v-enpsMin)/(enpsMax-enpsMin))); }
+
+  var pathEng = eng.map(function(v,i){ return (i===0?'M':'L')+xFor(i).toFixed(1)+','+yForEng(v).toFixed(1); }).join(' ');
+  var pathEnps = enps.map(function(v,i){ return (i===0?'M':'L')+xFor(i).toFixed(1)+','+yForEnps(v).toFixed(1); }).join(' ');
+
+  var gridLines='';
+  for(var g=0; g<=4; g++){
+    var gy = padT + innerH*(g/4);
+    gridLines += '<line x1="'+padL+'" y1="'+gy.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+gy.toFixed(1)+'" stroke="var(--line-strong)" stroke-width="1"/>';
+  }
+  var xLabels = DATA.quarters.map(function(q,i){
+    if(i%2!==0) return '';
+    return '<text x="'+xFor(i).toFixed(1)+'" y="'+(H-8)+'" font-size="8.5" fill="var(--ink-faint)" text-anchor="middle" font-family="var(--font-ui)">'+q+'</text>';
+  }).join('');
+  var dots = eng.map(function(v,i){ return '<circle cx="'+xFor(i).toFixed(1)+'" cy="'+yForEng(v).toFixed(1)+'" r="2.6" fill="var(--accent)"/>'; }).join('');
+  var hitAreas = eng.map(function(v,i){
+    return '<rect class="trend-hit" data-i="'+i+'" x="'+(xFor(i)-innerW/n/2).toFixed(1)+'" y="'+padT+'" width="'+(innerW/n).toFixed(1)+'" height="'+innerH+'" fill="transparent" style="cursor:crosshair"/>';
+  }).join('');
+
+  var svg = document.getElementById('trend-chart');
+  svg.innerHTML = gridLines + xLabels +
+    '<path d="'+pathEnps+'" fill="none" stroke="var(--accent-2)" stroke-width="1.8" stroke-dasharray="4 3" opacity="0.8" pathLength="1" style="stroke-dasharray:1; stroke-dashoffset:1;" class="draw-path"/>'+
+    '<path d="'+pathEng+'" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" pathLength="1" style="stroke-dasharray:1; stroke-dashoffset:1;" class="draw-path"/>'+
+    dots+
+    '<circle id="trend-hover-dot" cx="0" cy="0" r="4.5" fill="var(--ink)" stroke="#fff" stroke-width="2" style="opacity:0; pointer-events:none;"/>'+
+    hitAreas;
+  animatePaths(svg);
+  initTrendTooltip(svg, eng, enps, xFor, yForEng);
+}
+function initTrendTooltip(svg, eng, enps, xFor, yForEng){
+  var wrap = svg.closest('.trend-svg-wrap');
+  var tooltip = document.getElementById('trend-tooltip');
+  var hoverDot = svg.querySelector('#trend-hover-dot');
+  Array.prototype.forEach.call(svg.querySelectorAll('.trend-hit'), function(hit){
+    var i = parseInt(hit.getAttribute('data-i'), 10);
+    hit.addEventListener('mouseenter', showTip);
+    hit.addEventListener('mousemove', showTip);
+    hit.addEventListener('focus', showTip);
+    hit.addEventListener('mouseleave', hideTip);
+    hit.addEventListener('blur', hideTip);
+    function showTip(){
+      var svgRect = svg.getBoundingClientRect();
+      var wrapRect = wrap.getBoundingClientRect();
+      var scaleX = svgRect.width/520, scaleY = svgRect.height/240;
+      var px = xFor(i)*scaleX + (svgRect.left-wrapRect.left);
+      var py = yForEng(eng[i])*scaleY + (svgRect.top-wrapRect.top);
+      hoverDot.setAttribute('cx', xFor(i)); hoverDot.setAttribute('cy', yForEng(eng[i]));
+      hoverDot.style.opacity = '1';
+      tooltip.innerHTML = '<div>'+DATA.quarters[i]+'</div>'+
+        '<div class="tt-eng">Zaangażowanie: <b>'+eng[i].toFixed(1)+'</b></div>'+
+        '<div class="tt-enps">eNPS: <b>'+(enps[i]>0?'+':'')+enps[i].toFixed(0)+'</b></div>';
+      tooltip.style.left = px+'px';
+      tooltip.style.top = py+'px';
+      tooltip.classList.add('show');
+    }
+    function hideTip(){ tooltip.classList.remove('show'); hoverDot.style.opacity='0'; }
+  });
+}
+function animatePaths(svg){
+  var paths = svg.querySelectorAll('.draw-path');
+  if(REDUCED){ paths.forEach(function(p){ p.style.strokeDashoffset='0'; }); return; }
+  paths.forEach(function(p, idx){
+    p.style.transition='none';
+    p.getBoundingClientRect();
+    setTimeout(function(){
+      p.style.transition='stroke-dashoffset 1.1s '+(idx*0.15)+'s cubic-bezier(.22,.8,.24,1)';
+      p.style.strokeDashoffset='0';
+    }, 30);
+  });
+}
+
+/* ================= DONUT (statyczna segmentacja z Excela) ================= */
+function renderDonut(){
+  var cx=100, cy=100, r=72, stroke=26;
+  var C = 2*Math.PI*r;
+  var offset=0;
+  var svg = document.getElementById('donut-chart');
+  var circles = DATA.donut.map(function(seg){
+    var len = C*(seg.pct/100);
+    var el = '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+seg.color+'" stroke-width="'+stroke+'" '+
+      'stroke-dasharray="'+len.toFixed(1)+' '+(C-len).toFixed(1)+'" stroke-dashoffset="'+(-offset).toFixed(1)+'" '+
+      'transform="rotate(-90 '+cx+' '+cy+')" stroke-linecap="butt" class="donut-seg" data-len="'+len.toFixed(1)+'" data-gap="'+(C-len).toFixed(1)+'"/>';
+    offset += len;
+    return el;
+  }).join('');
+  svg.innerHTML = circles + '<text x="'+cx+'" y="'+(cy-4)+'" text-anchor="middle" font-size="22" font-weight="600" fill="var(--ink)" font-family="var(--font-mono)">100%</text>'+
+    '<text x="'+cx+'" y="'+(cy+16)+'" text-anchor="middle" font-size="9.5" fill="var(--ink-faint)" font-family="var(--font-ui)">objętych ankietą</text>';
+
+  if(!REDUCED){
+    var segs = svg.querySelectorAll('.donut-seg');
+    segs.forEach(function(s){
+      var full = parseFloat(s.getAttribute('data-len'))+parseFloat(s.getAttribute('data-gap'));
+      s.style.strokeDasharray = '0 '+full;
+      s.style.transition='stroke-dasharray .9s cubic-bezier(.22,.8,.24,1)';
+      setTimeout(function(){ s.style.strokeDasharray = s.getAttribute('data-len')+' '+s.getAttribute('data-gap'); }, 60);
+    });
+  }
+  document.getElementById('donut-legend').innerHTML = DATA.donut.map(function(seg, i){
+    return '<div class="donut-item stagger-item" style="animation-delay:'+(i*70)+'ms"><span class="dl"><i style="background:'+seg.color+'"></i><span>'+seg.label+'</span></span><span class="dv tabular">'+seg.pct+'%</span></div>';
+  }).join('');
+}
+
+/* ================= RANKING BARS (response rate, kolejność z Pythona) ================= */
+function renderRankingBars(){
+  var order = responseOrderFor(state.loc, state.level); // [{dept_id, value}] malejąco
+  var bestId = order[0].dept_id, worstId = order[order.length-1].dept_id;
+  document.getElementById('ranking-bars').innerHTML = order.map(function(row, i){
+    var d = deptById(row.dept_id);
+    var isBest=row.dept_id===bestId, isWorst=row.dept_id===worstId;
+    return '<div class="bar-row stagger-item" style="cursor:default; animation-delay:'+(i*45)+'ms;">'+
+      '<div class="dname" title="'+d.name+'">'+svgIcon(d.icon)+'<span class="dname-text">'+d.name+'</span>'+(isBest?'<span class="tag-best">Lider</span>':'')+(isWorst?'<span class="tag-worst">Uwaga</span>':'')+'</div>'+
+      '<div class="bar-track"><div class="bar-fill" style="width:'+row.value+'%;'+(isBest?'background:linear-gradient(90deg,#2C9C79,#5FCBA5);':'')+(isWorst?'background:linear-gradient(90deg,#CE6E63,#E4988F);':'')+'"></div></div>'+
+      '<div class="bar-val tabular">'+row.value.toFixed(0)+'%</div>'+
+    '</div>';
+  }).join('');
+}
+
+/* ================= TABLE (zakresy min/max dla heatmapy już policzone w Pythonie) ================= */
+var TABLE_COLS = [
+  {key:'name', label:'Dział'}, {key:'engagement', label:'Zaangażowanie'}, {key:'satisfaction', label:'Satysfakcja'},
+  {key:'enps', label:'eNPS'}, {key:'response', label:'Response'}, {key:'turnover', label:'Ryzyko rotacji'}
+];
+function mix(c1,c2,frac){
+  var a=hexToRgb(c1), b=hexToRgb(c2);
+  var r=Math.round(a[0]+(b[0]-a[0])*frac), g=Math.round(a[1]+(b[1]-a[1])*frac), bl=Math.round(a[2]+(b[2]-a[2])*frac);
+  return 'rgb('+r+','+g+','+bl+')';
+}
+function hexToRgb(h){ h=h.replace('#',''); return [parseInt(h.substr(0,2),16), parseInt(h.substr(2,2),16), parseInt(h.substr(4,2),16)]; }
+function heatBg(t, invert){
+  if(invert) t = 1-t;
+  if(t<0.5){ return mix('#F6C9C4','#FBE7B0', t/0.5); }
+  return mix('#FBE7B0','#CDEFDF', (t-0.5)/0.5);
+}
+function renderTable(){
+  var ranges = tableRangesFor(state.period, state.loc, state.level); // {engagement:{min,max}, ...} – z Pythona
+  var invertKeys = {turnover:true};
+  var rows = DATA.departments.map(function(d){ return {d:d, kpi: kpiFor(state.period, d.id, state.loc, state.level)}; });
+  rows.sort(function(a,b){
+    if(state.sortCol==='name') return state.sortDir*(a.d.name<b.d.name?-1:1);
+    return state.sortDir*(b.kpi[state.sortCol]-a.kpi[state.sortCol]);
+  });
+
+  var thead = '<thead><tr>'+TABLE_COLS.map(function(c){
+    var arrow = state.sortCol===c.key ? (state.sortDir===1?' ↑':' ↓') : '';
+    return '<th data-col="'+c.key+'">'+c.label+arrow+'</th>';
+  }).join('')+'</tr></thead>';
+
+  var tbody = '<tbody>'+rows.map(function(row, ri){
+    function cell(key, text){
+      var rg = ranges[key];
+      var t = rg.max===rg.min?0.5:(row.kpi[key]-rg.min)/(rg.max-rg.min);
+      return '<td><span class="heat-cell" style="background:'+heatBg(t, !!invertKeys[key])+'">'+text+'</span></td>';
+    }
+    return '<tr class="stagger-item" style="animation-delay:'+(ri*40)+'ms">'+
+      '<td class="dname-cell">'+svgIcon(row.d.icon).replace('<svg','<svg style="width:14px;height:14px;vertical-align:-2px;margin-right:6px;"')+row.d.name+'</td>'+
+      cell('engagement', row.kpi.engagement.toFixed(1))+
+      cell('satisfaction', row.kpi.satisfaction.toFixed(1))+
+      cell('enps', (row.kpi.enps>0?'+':'')+row.kpi.enps.toFixed(0))+
+      cell('response', row.kpi.response.toFixed(0)+'%')+
+      cell('turnover', row.kpi.turnover.toFixed(0)+'%')+
+    '</tr>';
+  }).join('')+'</tbody>';
+
+  var table = document.getElementById('compare-table');
+  table.innerHTML = thead+tbody;
+  Array.prototype.forEach.call(table.querySelectorAll('th[data-col]'), function(th){
+    th.addEventListener('click', function(){
+      var col = th.getAttribute('data-col');
+      if(state.sortCol===col) state.sortDir*=-1; else { state.sortCol=col; state.sortDir=-1; }
+      renderTable();
+    });
+  });
+}
+
+/* ================= RANKING CARDS (kolejność i wynik już policzone w Pythonie) ================= */
+function sparklineSVG(points){
+  var W=100,H=30,pad=3;
+  var min=Math.min.apply(null,points), max=Math.max.apply(null,points);
+  var pts = points.map(function(v,i){
+    var x = pad + (W-2*pad)*(i/(points.length-1));
+    var y = pad + (H-2*pad)*(1-((v-min)/((max-min)||1)));
+    return x.toFixed(1)+','+y.toFixed(1);
+  }).join(' ');
+  var rising = points[points.length-1] >= points[0];
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:30px;"><polyline points="'+pts+'" fill="none" stroke="'+(rising?'var(--good)':'var(--bad)')+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
+function renderRankCards(){
+  var order = rankOrderFor(state.period, state.loc, state.level); // [{dept_id, score, delta}], malejąco
+  document.getElementById('rank-grid').innerHTML = order.map(function(row, i){
+    var d = deptById(row.dept_id);
+    var spark = sparkFor(d.id, state.loc, state.level);
+    var badge = i===0 ? '<span class="badge leader">Lider</span>' : (i===order.length-1 ? '<span class="badge watch">Do obserwacji</span>' : '');
+    return '<div class="rank-card stagger-item" style="animation-delay:'+(i*60)+'ms" data-dept="'+d.id+'" tabindex="0" role="button" aria-label="Pokaż szczegóły działu '+d.name+'">'+
+      '<div class="rank-top"><div class="rank-num tabular">#'+(i+1)+'</div>'+
+        '<div class="rank-icon">'+svgIcon(d.icon)+'</div>'+
+        '<div class="rank-id"><div class="rank-name" title="'+d.name+'">'+d.name+'</div><div class="rank-headcount">'+d.headcount+' os.</div></div>'+
+        badge+
+      '</div>'+
+      '<div class="rank-score tabular">'+row.score.toFixed(1)+'<span class="u"> / 100</span></div>'+
+      '<div class="rank-spark">'+sparklineSVG(spark)+'</div>'+
+      '<div class="rank-foot"><span style="font-size:10.5px;color:var(--ink-faint)">Ostatnie 6 kw.</span>'+
+        '<span class="rank-delta '+(row.delta>=0?'up':'down')+'">'+(row.delta>=0?'▲':'▼')+' '+Math.abs(row.delta).toFixed(1)+'</span></div>'+
+    '</div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('#rank-grid .rank-card'), function(card){
+    card.addEventListener('click', function(){
+      selectDept(card.getAttribute('data-dept'));
+      document.querySelector('.compare-grid').scrollIntoView({behavior:'smooth', block:'center'});
+    });
+  });
+}
+
+/* ================= MASTER RENDER ================= */
+function renderAll(){
+  renderKPIs();
+  renderCompareBars();
+  renderDetail();
+  renderTrendChart();
+  renderDonut();
+  renderRankingBars();
+  renderTable();
+  renderRankCards();
+}
+
+/* ================= HERO CANVAS: unoszące się szklane bąbelki ================= */
+function initHeroCanvas(){
+  var c = document.getElementById('heroCanvas');
+  var x = c.getContext('2d'), w, h, pts=[];
+  function resize(){
+    w = c.width = c.parentElement.offsetWidth;
+    h = c.height = c.parentElement.offsetHeight;
+    pts = Array.from({length:46}, function(){
+      return {
+        x:Math.random()*w, y:Math.random()*h,
+        r:Math.random()*13+5,
+        sp:Math.random()*0.5+0.18,
+        drift:Math.random()*0.5-0.25,
+        tw:Math.random()*Math.PI*2,
+        tws:Math.random()*0.006+0.004
+      };
+    });
+  }
+  function draw(){
+    x.clearRect(0,0,w,h);
+    pts.forEach(function(p){
+      p.tw += p.tws;
+      var pulse = 0.55 + Math.sin(p.tw)*0.25;
+      var g = x.createRadialGradient(p.x-p.r*0.3, p.y-p.r*0.35, p.r*0.15, p.x, p.y, p.r);
+      g.addColorStop(0, 'rgba(255,255,255,'+(0.85*pulse)+')');
+      g.addColorStop(0.55, 'rgba(190,216,240,'+(0.4*pulse)+')');
+      g.addColorStop(1, 'rgba(92,137,194,'+(0.05*pulse)+')');
+      x.beginPath();
+      x.arc(p.x,p.y,p.r,0,Math.PI*2);
+      x.fillStyle = g;
+      x.fill();
+      x.lineWidth = 1.1;
+      x.strokeStyle = 'rgba(255,255,255,'+(0.75*pulse)+')';
+      x.stroke();
+      if(!REDUCED){
+        p.y -= p.sp; p.x += p.drift;
+        if(p.y < -p.r){ p.y = h+p.r; p.x = Math.random()*w; }
+        if(p.x < -p.r) p.x = w+p.r;
+        if(p.x > w+p.r) p.x = -p.r;
+      }
+    });
+    if(!REDUCED) requestAnimationFrame(draw);
+  }
+  resize(); draw();
+  window.addEventListener('resize', resize);
+}
+function initScrollEffects(){
+  var toolbar = document.getElementById('toolbar');
+  window.addEventListener('scroll', function(){
+    if(window.scrollY>10) toolbar.classList.add('scrolled'); else toolbar.classList.remove('scrolled');
+  });
+}
+function initScrollReveal(){
+  var els = document.querySelectorAll('.reveal');
+  if(REDUCED || !('IntersectionObserver' in window)){
+    els.forEach(function(el){ el.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){ entry.target.classList.add('in'); io.unobserve(entry.target); }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+  els.forEach(function(el){ io.observe(el); });
+}
+
+/* ================= INIT ================= */
+document.getElementById('gen-date').textContent = DATA.meta.generated_at;
+document.getElementById('hero-headcount').textContent = DATA.meta.total_headcount;
+document.getElementById('hero-depts').textContent = DATA.meta.n_departments;
+document.getElementById('hero-quarters').textContent = DATA.meta.n_quarters;
+document.getElementById('hero-headcount-inline').textContent = DATA.meta.total_headcount;
+document.getElementById('hero-depts-inline').textContent = DATA.meta.n_departments;
+initFilters();
+initHeroCanvas();
+initScrollEffects();
+initScrollReveal();
+renderAll();
+
+})();
+</script>
+</body>
+</html>

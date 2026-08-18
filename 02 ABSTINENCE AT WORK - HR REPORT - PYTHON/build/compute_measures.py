@@ -10,11 +10,6 @@ JS nie robi zadnej agregacji danych, wylacznie renderuje DOM i obsluguje
 interakcje (klikniecia filtrow), przelaczajac sie miedzy gotowymi wynikami
 dla poszczegolnych stanow filtra.
 
-Formuly sa 1:1 odtworzeniem tego, co wczesniej liczyl JS w kazdym pliku
-js/pageN_x.js - patrz komentarze przy kazdej sekcji.
-
-Uruchomienie (po edycji CSV):
-    python3 build/compute_measures.py
 
 Wygenerowany plik: data/measures.js  (const MEASURES = {...};)
 """
@@ -100,7 +95,7 @@ home_measures = {
 # ===========================================================================
 # STRONA 2 - EXECUTIVE SUMMARY
 # ===========================================================================
-TOTAL_ABSENCE_PY = 4876  # stala z oryginalnego raportu, brak w danych zrodlowych
+TOTAL_ABSENCE_PY = 4876  # stala z oryginalnego raportu
 AVG_BENCHMARK = 5
 COST_PER_HOUR = 42
 

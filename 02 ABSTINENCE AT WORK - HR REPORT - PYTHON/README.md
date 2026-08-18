@@ -5,19 +5,13 @@ raportu Power BI ("ANALYSIS OF ABSTINENCE AT WORK") i rzeczywistych danych ze zb
 **Absenteeism at Work** (UCI, 740 rekordów, 36 pracowników).
 
 Wszystkie liczby na każdej stronie są liczone dynamicznie w przeglądarce na podstawie
-danych w `data/Absenteeism_at_work.csv` — nic nie jest zaszyte na sztywno.
+danych w `data/Absenteeism_at_work.csv` - nic nie jest zaszyte na sztywno.
 
 ## 🚀 Szybki start
 
-Przeglądanie raportu nie wymaga instalacji ani serwera — to czyste HTML/CSS/JS.
+Przeglądanie raportu nie wymaga instalacji ani serwera - to czyste HTML/CSS/JS/PYTHON.
 
-**Najprościej:** otwórz `index.html` bezpośrednio w przeglądarce (podwójne kliknięcie
-lub przeciągnięcie do okna przeglądarki).
-
-**Podgląd online (GitHub Pages):** patrz sekcja niżej.
-
-Instalacja Pythona jest potrzebna tylko wtedy, gdy zmieniasz dane źródłowe
-i chcesz przeliczyć miary na nowo — patrz sekcja „Aktualizacja danych” niżej.
+**Najprościej:** otwórz link w przeglądarce: `https://sendecka.github.io/PORTFOLIO/02%20ABSTINENCE%20AT%20WORK%20-%20HR%20REPORT%20-%20PYTHON/`
 
 ## 📄 Struktura
 
@@ -66,29 +60,9 @@ bez przeładowania.
   oryginalnej konwencji zbioru danych (Brazylia, półkula południowa).
 - Stawka kosztowa ($42/h) i cel oszczędności (20%) to założenia biznesowe, nie dane źródłowe.
 
-## 🐍 Aktualizacja danych (wymaga Pythona)
+## 🐍 Obliczenia wskaźników (Python)
 
 Wszystkie wskaźniki widoczne na stronach — sumy godzin, KPI, Bradford Factor,
 podziały wg wieku/stażu/powodu itd. — są liczone **w Pythonie** (pandas), nie
 w przeglądarce. Strony HTML/JS tylko odczytują gotowy wynik z `data/measures.js`.
 
-Aby podmienić dane źródłowe i przeliczyć raport na nowo:
-
-```bash
-pip install -r build/requirements.txt   # jednorazowo
-# 1. podmień data/Absenteeism_at_work.csv (zachowując te same nazwy kolumn)
-# 2. przelicz miary:
-python3 build/compute_measures.py
-```
-
-Skrypt nadpisze `data/measures.js` nowymi wynikami — strony automatycznie
-pokażą aktualne dane przy kolejnym otwarciu, bez żadnych innych zmian.
-Szczegóły dokładnych formuł: patrz `DOCUMENTATION.md`, sekcja 3.3.
-
-## 📤 Publikacja jako strona GitHub Pages
-
-Po wgraniu repozytorium na GitHub:
-1. Wejdź w **Settings → Pages**
-2. Source: **Deploy from a branch**, branch: **main**, folder: **/ (root)**
-3. Zapisz — po chwili strona będzie dostępna pod adresem
-   `https://TWOJA-NAZWA.github.io/NAZWA-REPO/`
