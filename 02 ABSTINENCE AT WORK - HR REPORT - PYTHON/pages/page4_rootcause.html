@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Root Cause Analysis</title>
+<link rel="stylesheet" href="../css/page4_rootcause.css">
+</head>
+<body>
+
+<div class="page">
+
+  <div class="header-row">
+    <div>
+      <h1 class="header-title">Root Cause Analysis</h1>
+      <div class="header-sub">Absence reasons, employee profile correlations</div>
+    </div>
+        <nav class="pill-nav">
+      <button  data-page="home">Home</button>
+      <button  data-page="summary">Summary</button>
+      <button  data-page="trend">Time Trend</button>
+      <button class="is-active" data-page="root">Root Cause</button>
+      <button  data-page="risk">Risk</button>
+      <button  data-page="recommendations">Recommendations</button>
+    </nav>
+    <div style="justify-self: end;">
+      <span class="filter-badge" id="filterBadge" style="display:none;">
+        <span class="fb-label"></span>
+        <button class="fb-clear" id="fbClear" aria-label="Wyczysc filtr">&times;</button>
+      </span>
+    </div>
+  </div>
+
+  <div class="root-grid">
+    <div class="col">
+      <div class="card">
+        <p class="card-title">Top absence reason</p>
+        <div id="reasonRows"></div>
+      </div>
+      <div class="card">
+        <p class="card-title">Absence by employee age</p>
+        <div class="vbar-wrap" id="ageBars"></div>
+      </div>
+      <div class="card">
+        <p class="card-title">Distance from home — absence hours</p>
+        <div class="dist-block" id="distRows"></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="kpi-mini-row" id="kpiMini"></div>
+
+      <div class="card">
+        <p class="card-title">Social habits — absence hours</p>
+        <div class="se-block" id="socialRows"></div>
+      </div>
+
+      <div class="card">
+        <p class="card-title">Education level — absence hours</p>
+        <div class="se-block" id="eduRows"></div>
+      </div>
+
+      <div class="card">
+        <p class="card-title">Total absence by service years</p>
+        <div class="vbar-wrap" id="svcBars"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<script src="../data/measures.js"></script>
+<script src="../js/page4_rootcause.js"></script>
+</body>
+</html>
