@@ -1,0 +1,12 @@
+# System
+.DS_Store
+Thumbs.db
+
+# Edytory
+.vscode/
+.idea/
+*.swp
+
+# Ewentualne archiwa robocze
+*.zip
+*.tmp
