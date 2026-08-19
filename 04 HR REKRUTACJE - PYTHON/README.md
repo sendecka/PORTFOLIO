@@ -33,7 +33,7 @@ Silnik Python i silnik JavaScript dają **identyczne wyniki** (zweryfikowane tes
 
 ## Uruchomienie
 
-Uruchom w przeglądarce: 
+Uruchom w przeglądarce: https://sendecka.github.io/PORTFOLIO/04%20HR%20REKRUTACJE%20-%20PYTHON/
 
 ## Struktura projektu
 
